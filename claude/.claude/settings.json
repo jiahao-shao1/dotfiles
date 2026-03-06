@@ -7,6 +7,10 @@
           {
             "type": "command",
             "command": "curl -s -X POST 'https://api.telegram.org/botREDACTED_TELEGRAM_BOT_TOKEN/sendMessage' -d 'chat_id=REDACTED_TELEGRAM_CHAT_ID' -d \"text=🤖 Claude Code finished working at $(date '+%Y-%m-%d %H:%M:%S')\" >/dev/null 2>&1"
+          },
+          {
+            "type": "command",
+            "command": "~/dotfiles/dot-sync.sh >/dev/null 2>&1 || true"
           }
         ]
       }
