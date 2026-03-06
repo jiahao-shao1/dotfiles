@@ -30,6 +30,16 @@
           }
         ]
       }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd ~/dotfiles && git pull --ff-only --quiet 2>/dev/null || true"
+          }
+        ]
+      }
     ]
   }
 }
