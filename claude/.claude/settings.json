@@ -1,0 +1,35 @@
+{
+  "skipDangerousModePermissionPrompt": true,
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "curl -s -X POST 'https://api.telegram.org/botREDACTED_TELEGRAM_BOT_TOKEN/sendMessage' -d 'chat_id=REDACTED_TELEGRAM_CHAT_ID' -d \"text=🤖 Claude Code finished working at $(date '+%Y-%m-%d %H:%M:%S')\" >/dev/null 2>&1"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "curl -s -X POST 'https://api.telegram.org/botREDACTED_TELEGRAM_BOT_TOKEN/sendMessage' -d 'chat_id=REDACTED_TELEGRAM_CHAT_ID' -d \"text=📢 Claude Code needs your attention at $(date '+%Y-%m-%d %H:%M:%S')\" >/dev/null 2>&1"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "curl -s -X POST 'https://api.telegram.org/botREDACTED_TELEGRAM_BOT_TOKEN/sendMessage' -d 'chat_id=REDACTED_TELEGRAM_CHAT_ID' -d \"text=🎯 Claude Code subagent completed at $(date '+%Y-%m-%d %H:%M:%S')\" >/dev/null 2>&1"
+          }
+        ]
+      }
+    ]
+  }
+}
