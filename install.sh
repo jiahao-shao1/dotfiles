@@ -63,9 +63,9 @@ mkdir -p "$HOME/.claude"
 # 4. Stow packages
 cd "$DOTFILES_DIR"
 echo "Stowing agents..."
-stow agents
+stow --no-folding agents
 echo "Stowing claude..."
-stow claude
+stow --no-folding claude
 
 echo ""
 echo "=== Done! ==="
