@@ -69,6 +69,15 @@ else
     echo "you-should-use already installed."
 fi
 
+# 2b. Install Agent Reach (internet access for AI agents)
+if ! command -v agent-reach &>/dev/null; then
+    echo "Installing Agent Reach..."
+    pip install agent-reach
+    agent-reach install --env=auto --safe
+else
+    echo "Agent Reach already installed."
+fi
+
 # 3. Merge local skills into repo (keep skills that only exist locally)
 if [ -d "$HOME/.agents/skills" ] && [ ! -L "$HOME/.agents" ]; then
     echo "Merging local skills into dotfiles repo..."
