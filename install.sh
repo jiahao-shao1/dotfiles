@@ -31,7 +31,38 @@ else
     echo "GNU Stow already installed."
 fi
 
-# 2. Merge local skills into repo (keep skills that only exist locally)
+# 2. Install zsh dependencies (oh-my-zsh, plugins, themes)
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
+    echo "Installing Oh My Zsh..."
+    RUNZSH=no KEEP_ZSHRC=yes sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+else
+    echo "Oh My Zsh already installed."
+fi
+
+ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
+
+if [ ! -d "$ZSH_CUSTOM/themes/powerlevel10k" ]; then
+    echo "Installing Powerlevel10k..."
+    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$ZSH_CUSTOM/themes/powerlevel10k"
+else
+    echo "Powerlevel10k already installed."
+fi
+
+if [ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]; then
+    echo "Installing zsh-syntax-highlighting..."
+    git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting.git "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
+else
+    echo "zsh-syntax-highlighting already installed."
+fi
+
+if [ ! -d "$ZSH_CUSTOM/plugins/zsh-autosuggestions" ]; then
+    echo "Installing zsh-autosuggestions..."
+    git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions "$ZSH_CUSTOM/plugins/zsh-autosuggestions"
+else
+    echo "zsh-autosuggestions already installed."
+fi
+
+# 3. Merge local skills into repo (keep skills that only exist locally)
 if [ -d "$HOME/.agents/skills" ] && [ ! -L "$HOME/.agents" ]; then
     echo "Merging local skills into dotfiles repo..."
     for skill_dir in "$HOME/.agents/skills"/*/; do
@@ -45,16 +76,16 @@ if [ -d "$HOME/.agents/skills" ] && [ ! -L "$HOME/.agents" ]; then
     done
 fi
 
-# 3. Backup and remove managed files
+# 4. Backup and remove managed files
 BACKUP_DIR="$HOME/.dotfiles-backup-$(date +%Y%m%d%H%M%S)"
 
-# 3a. Backup tmux.conf if it's a real file
+# 4a. Backup tmux.conf if it's a real file
 if [ -e "$HOME/.tmux.conf" ] && [ ! -L "$HOME/.tmux.conf" ]; then
     mkdir -p "$BACKUP_DIR"
     mv "$HOME/.tmux.conf" "$BACKUP_DIR/.tmux.conf"
 fi
 
-# 3b. Backup other managed files
+# 4b. Backup other managed files
 NEED_BACKUP=false
 
 if [ -e "$HOME/.agents" ] && [ ! -L "$HOME/.agents" ]; then
@@ -81,10 +112,10 @@ else
     echo "No existing configs to backup (or already symlinked)."
 fi
 
-# 4. Ensure ~/.claude directory exists
+# 5. Ensure ~/.claude directory exists
 mkdir -p "$HOME/.claude"
 
-# 5. Stow packages
+# 6. Stow packages
 cd "$DOTFILES_DIR"
 echo "Stowing agents..."
 stow --no-folding agents
@@ -95,7 +126,7 @@ stow --no-folding zsh
 echo "Stowing tmux..."
 stow tmux
 
-# 6. Commit and push newly imported skills
+# 7. Commit and push newly imported skills
 cd "$DOTFILES_DIR"
 git add -A
 if ! git diff --cached --quiet; then
@@ -104,7 +135,7 @@ if ! git diff --cached --quiet; then
     git push
 fi
 
-# 7. Ensure .zshrc sources .zshrc.shared
+# 8. Ensure .zshrc sources .zshrc.shared
 if [ -f "$HOME/.zshrc" ]; then
     if ! grep -q 'source.*\.zshrc\.shared' "$HOME/.zshrc"; then
         echo "Adding 'source ~/.zshrc.shared' to ~/.zshrc ..."
