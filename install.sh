@@ -102,11 +102,22 @@ if ! git diff --cached --quiet; then
     git push
 fi
 
+# 7. Ensure .zshrc sources .zshrc.shared
+if [ -f "$HOME/.zshrc" ]; then
+    if ! grep -q 'source.*\.zshrc\.shared' "$HOME/.zshrc"; then
+        echo "Adding 'source ~/.zshrc.shared' to ~/.zshrc ..."
+        sed -i.bak '1s/^/source "$HOME\/.zshrc.shared"\n\n/' "$HOME/.zshrc"
+        rm -f "$HOME/.zshrc.bak"
+    else
+        echo "~/.zshrc already sources .zshrc.shared."
+    fi
+else
+    echo 'source "$HOME/.zshrc.shared"' > "$HOME/.zshrc"
+    echo "Created ~/.zshrc with source line."
+fi
+
 echo ""
 echo "=== Done! ==="
-echo ""
-echo "IMPORTANT: Add 'source ~/.zshrc.shared' to your ~/.zshrc"
-echo ""
 echo "Verify: ls -la ~/.agents/skills/"
 echo "Verify: cat ~/.claude/settings.json | head -3"
 echo "Verify: readlink ~/.zshrc.shared"
