@@ -2,6 +2,8 @@
 set -e
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+AGENTS_REPO="$DOTFILES_DIR/agents/.agents/skills"
+CLAUDE_REPO="$DOTFILES_DIR/claude/.claude/skills"
 
 echo "=== Claude Code Dotfiles Installer ==="
 
@@ -29,7 +31,21 @@ else
     echo "GNU Stow already installed."
 fi
 
-# 2. Backup existing configs
+# 2. Merge local skills into repo (keep skills that only exist locally)
+if [ -d "$HOME/.agents/skills" ] && [ ! -L "$HOME/.agents" ]; then
+    echo "Merging local skills into dotfiles repo..."
+    for skill_dir in "$HOME/.agents/skills"/*/; do
+        [ -d "$skill_dir" ] || continue
+        skill=$(basename "$skill_dir")
+        if [ ! -d "$AGENTS_REPO/$skill" ]; then
+            echo "  + Importing local skill: $skill"
+            cp -r "$skill_dir" "$AGENTS_REPO/$skill"
+            ln -sf "../../../agents/.agents/skills/$skill" "$CLAUDE_REPO/$skill"
+        fi
+    done
+fi
+
+# 3. Backup and remove managed files
 BACKUP_DIR="$HOME/.dotfiles-backup-$(date +%Y%m%d%H%M%S)"
 NEED_BACKUP=false
 
@@ -57,15 +73,24 @@ else
     echo "No existing configs to backup (or already symlinked)."
 fi
 
-# 3. Ensure ~/.claude directory exists
+# 4. Ensure ~/.claude directory exists
 mkdir -p "$HOME/.claude"
 
-# 4. Stow packages
+# 5. Stow packages
 cd "$DOTFILES_DIR"
 echo "Stowing agents..."
 stow --no-folding agents
 echo "Stowing claude..."
 stow --no-folding claude
+
+# 6. Commit and push newly imported skills
+cd "$DOTFILES_DIR"
+git add -A
+if ! git diff --cached --quiet; then
+    echo "Pushing newly imported skills to repo..."
+    git commit -m "sync: import local skills from $(hostname)"
+    git push
+fi
 
 echo ""
 echo "=== Done! ==="
