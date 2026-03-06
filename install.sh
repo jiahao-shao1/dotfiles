@@ -62,6 +62,13 @@ else
     echo "zsh-autosuggestions already installed."
 fi
 
+if [ ! -d "$ZSH_CUSTOM/plugins/you-should-use" ]; then
+    echo "Installing you-should-use..."
+    git clone --depth=1 https://github.com/MichaelAquilina/zsh-you-should-use.git "$ZSH_CUSTOM/plugins/you-should-use"
+else
+    echo "you-should-use already installed."
+fi
+
 # 3. Merge local skills into repo (keep skills that only exist locally)
 if [ -d "$HOME/.agents/skills" ] && [ ! -L "$HOME/.agents" ]; then
     echo "Merging local skills into dotfiles repo..."
