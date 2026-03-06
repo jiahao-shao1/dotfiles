@@ -16,6 +16,10 @@ RED='\033[0;31m'
 YELLOW='\033[0;33m'
 NC='\033[0m'
 
+is_gitignored() {
+    cd "$DOTFILES_DIR" && git check-ignore -q "agents/.agents/skills/$1" 2>/dev/null
+}
+
 sync_skills() {
     local dry_run=$1
     local changes=0
@@ -25,6 +29,10 @@ sync_skills() {
         skill=$(basename "$skill_dir")
         # Check if the SKILL.md is a real file (not a stow symlink)
         if [ -f "$skill_dir/SKILL.md" ] && [ ! -L "$skill_dir/SKILL.md" ]; then
+            # Skip gitignored skills (e.g. company-internal)
+            if is_gitignored "$skill"; then
+                continue
+            fi
             if [ ! -d "$AGENTS_REPO/$skill" ]; then
                 echo -e "${GREEN}+ NEW:${NC} $skill"
                 if [ "$dry_run" != "true" ]; then
