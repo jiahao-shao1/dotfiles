@@ -45,7 +45,13 @@ if [ -d "$HOME/.agents/skills" ] && [ ! -L "$HOME/.agents" ]; then
     done
 fi
 
-# 3. Backup and remove managed files
+# 3. Backup tmux.conf if it's a real file
+if [ -e "$HOME/.tmux.conf" ] && [ ! -L "$HOME/.tmux.conf" ]; then
+    mkdir -p "${BACKUP_DIR:-$HOME/.dotfiles-backup-$(date +%Y%m%d%H%M%S)}"
+    mv "$HOME/.tmux.conf" "$BACKUP_DIR/.tmux.conf"
+fi
+
+# 4. Backup and remove managed files
 BACKUP_DIR="$HOME/.dotfiles-backup-$(date +%Y%m%d%H%M%S)"
 NEED_BACKUP=false
 
@@ -82,6 +88,10 @@ echo "Stowing agents..."
 stow --no-folding agents
 echo "Stowing claude..."
 stow --no-folding claude
+echo "Stowing zsh..."
+stow --no-folding zsh
+echo "Stowing tmux..."
+stow tmux
 
 # 6. Commit and push newly imported skills
 cd "$DOTFILES_DIR"
@@ -94,5 +104,10 @@ fi
 
 echo ""
 echo "=== Done! ==="
+echo ""
+echo "IMPORTANT: Add 'source ~/.zshrc.shared' to your ~/.zshrc"
+echo ""
 echo "Verify: ls -la ~/.agents/skills/"
 echo "Verify: cat ~/.claude/settings.json | head -3"
+echo "Verify: readlink ~/.zshrc.shared"
+echo "Verify: readlink ~/.tmux.conf"
