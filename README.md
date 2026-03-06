@@ -2,20 +2,47 @@
 
 Claude Code config sync across machines using GNU Stow.
 
-## Install
+## One-liner Install
 
 ```bash
-git clone git@github.com:jiahao-shao1/dotfiles.git ~/dotfiles
-cd ~/dotfiles
-./install.sh
+git clone git@github.com:jiahao-shao1/dotfiles.git ~/dotfiles && cd ~/dotfiles && ./install.sh
 ```
 
-## Packages
+- Automatically installs GNU Stow (brew on macOS, from source on Linux)
+- Merges local skills into repo (won't overwrite existing skills)
+- Backs up existing configs to `~/.dotfiles-backup-<timestamp>/`
 
-- `agents` — `~/.agents/skills/` (skill source files)
-- `claude` — `~/.claude/settings.json`, `CLAUDE.md`, `skills/` symlinks
+## What Gets Synced
 
-## Daily use
+| Synced | Not Synced |
+|--------|------------|
+| `~/.agents/skills/` | `~/.claude/history.jsonl` |
+| `~/.claude/settings.json` | `~/.claude/.credentials.json` |
+| `~/.claude/CLAUDE.md` | `~/.claude/projects/` |
+| `~/.claude/skills/` | Other runtime files |
 
-- Auto-pull: Claude Code SessionStart hook runs `git pull --ff-only`
-- Manual push: `cd ~/dotfiles && git add -A && git commit -m "update" && git push`
+## Daily Use
+
+Syncing is fully automatic:
+
+- **Start** Claude Code → auto `git pull` (SessionStart hook)
+- **Exit** Claude Code → auto `dot-sync` (Stop hook)
+
+Manual commands:
+
+```bash
+dot-status    # show pending changes
+dot-sync      # sync now (detect new/removed/modified skills → commit → push)
+```
+
+## Adding/Removing Skills
+
+```bash
+# Install a new skill (works with npx skills as usual)
+npx skills add vercel-labs/agent-skills --skill frontend-design -a claude-code
+# Auto-synced on next Claude Code exit, or run: dot-sync
+
+# Remove a skill
+npx skills remove frontend-design
+# Auto-synced on next Claude Code exit, or run: dot-sync
+```
