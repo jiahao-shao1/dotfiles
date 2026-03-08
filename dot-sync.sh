@@ -20,6 +20,12 @@ is_gitignored() {
     cd "$DOTFILES_DIR" && git check-ignore -q "agents/.agents/skills/$1" 2>/dev/null
 }
 
+# Remove private config ignores from skill .gitignore (dotfiles repo is private, no need to ignore)
+unignore_private_configs() {
+    local gitignore="$1/.gitignore"
+    [ -f "$gitignore" ] && sed -i '' '/^CONFIG\.private\.md$/d' "$gitignore"
+}
+
 sync_skills() {
     local dry_run=$1
     local changes=0
@@ -37,6 +43,7 @@ sync_skills() {
                 echo -e "${GREEN}+ NEW:${NC} $skill"
                 if [ "$dry_run" != "true" ]; then
                     cp -r "$skill_dir" "$AGENTS_REPO/$skill"
+                    unignore_private_configs "$AGENTS_REPO/$skill"
                     ln -sf "../../../agents/.agents/skills/$skill" "$CLAUDE_REPO/$skill"
                 fi
                 changes=$((changes + 1))
@@ -66,6 +73,7 @@ sync_skills() {
                 if [ "$dry_run" != "true" ]; then
                     rm -rf "$AGENTS_REPO/$skill"
                     cp -r "$skill_dir" "$AGENTS_REPO/$skill"
+                    unignore_private_configs "$AGENTS_REPO/$skill"
                 fi
                 changes=$((changes + 1))
             fi

@@ -9,7 +9,7 @@
           },
           {
             "type": "command",
-            "command": "~/dotfiles/dot-sync.sh >/dev/null 2>&1 || true"
+            "command": "[ \"$(hostname)\" = 'JadenMacBook-Pro.local' ] && ~/dotfiles/dot-sync.sh >/dev/null 2>&1 || true"
           }
         ]
       }
