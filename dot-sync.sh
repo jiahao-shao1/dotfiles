@@ -99,8 +99,10 @@ case "${1:-}" in
         ;;
     *)
         echo "=== Syncing Dotfiles ==="
+        set +e
         sync_skills false
         changes=$?
+        set -e
 
         cd "$DOTFILES_DIR"
 
