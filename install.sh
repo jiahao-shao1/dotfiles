@@ -69,7 +69,30 @@ else
     echo "you-should-use already installed."
 fi
 
-# 2b. Install Agent Reach (internet access for AI agents)
+# 2b. Install MesloLGS NF font (required by Powerlevel10k in iTerm2)
+if [[ "$(uname)" == "Darwin" ]]; then
+    FONT_DIR="$HOME/Library/Fonts"
+    if ! ls "$FONT_DIR"/MesloLGS*NF* &>/dev/null; then
+        echo "Installing MesloLGS NF fonts..."
+        FONT_BASE="https://github.com/romkatv/powerlevel10k-media/raw/master"
+        for font in "MesloLGS NF Regular.ttf" "MesloLGS NF Bold.ttf" "MesloLGS NF Italic.ttf" "MesloLGS NF Bold Italic.ttf"; do
+            curl -sL "$FONT_BASE/${font// /%20}" -o "$FONT_DIR/$font"
+        done
+        echo "MesloLGS NF fonts installed."
+    else
+        echo "MesloLGS NF fonts already installed."
+    fi
+fi
+
+# 2c. Configure iTerm2 to load preferences from dotfiles
+if [[ "$(uname)" == "Darwin" ]] && [ -d "$DOTFILES_DIR/iterm2" ]; then
+    echo "Configuring iTerm2 custom preferences..."
+    defaults write com.googlecode.iterm2 PrefsCustomFolder -string "$DOTFILES_DIR/iterm2"
+    defaults write com.googlecode.iterm2 LoadPrefsFromCustomFolder -bool true
+    echo "iTerm2 will load preferences from $DOTFILES_DIR/iterm2"
+fi
+
+# 2d. Install Agent Reach (internet access for AI agents)
 if ! command -v agent-reach &>/dev/null; then
     echo "Installing Agent Reach..."
     pip install agent-reach
