@@ -1,0 +1,1 @@
+../../../dotfiles/agents/.agents/skills/ljg-xray-paper/SKILL.md
