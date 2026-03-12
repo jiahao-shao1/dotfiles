@@ -80,7 +80,19 @@ sync_skills() {
         fi
     done
 
-    # 4. Check settings.json and CLAUDE.md changes (stow symlinks, so changes are already in repo)
+    # 4. Ensure every agents skill has a corresponding claude symlink
+    for skill_dir in "$AGENTS_REPO"/*/; do
+        skill=$(basename "$skill_dir")
+        if [ ! -e "$CLAUDE_REPO/$skill" ]; then
+            echo -e "${GREEN}+ LINK:${NC} $skill"
+            if [ "$dry_run" != "true" ]; then
+                ln -sf "../../../agents/.agents/skills/$skill" "$CLAUDE_REPO/$skill"
+            fi
+            changes=$((changes + 1))
+        fi
+    done
+
+    # 5. Check settings.json and CLAUDE.md changes (stow symlinks, so changes are already in repo)
     cd "$DOTFILES_DIR"
     if ! git diff --quiet 2>/dev/null; then
         echo -e "${YELLOW}~ MODIFIED:${NC} settings/config files"
