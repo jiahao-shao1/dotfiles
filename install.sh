@@ -102,11 +102,13 @@ else
 fi
 
 # 3. Merge local skills into repo (keep skills that only exist locally)
-if [ -d "$HOME/.agents/skills" ] && [ ! -L "$HOME/.agents" ]; then
+if [ -d "$HOME/.agents/skills" ]; then
     echo "Merging local skills into dotfiles repo..."
     for skill_dir in "$HOME/.agents/skills"/*/; do
         [ -d "$skill_dir" ] || continue
         skill=$(basename "$skill_dir")
+        # Skip stow-managed skills (SKILL.md is a symlink)
+        [ -f "$skill_dir/SKILL.md" ] && [ ! -L "$skill_dir/SKILL.md" ] || continue
         if [ ! -d "$AGENTS_REPO/$skill" ]; then
             echo "  + Importing local skill: $skill"
             cp -r "$skill_dir" "$AGENTS_REPO/$skill"
@@ -157,13 +159,13 @@ mkdir -p "$HOME/.claude"
 # 6. Stow packages
 cd "$DOTFILES_DIR"
 echo "Stowing agents..."
-stow --no-folding agents
+stow -R --no-folding agents
 echo "Stowing claude..."
-stow --no-folding claude
+stow -R --no-folding claude
 echo "Stowing zsh..."
-stow --no-folding zsh
+stow -R --no-folding zsh
 echo "Stowing tmux..."
-stow tmux
+stow -R tmux
 
 # 7. Commit and push newly imported skills
 cd "$DOTFILES_DIR"

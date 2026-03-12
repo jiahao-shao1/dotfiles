@@ -121,8 +121,8 @@ case "${1:-}" in
         # Restow to pick up new symlinks
         if [ $changes -gt 0 ]; then
             echo "Restowing..."
-            stow --no-folding agents 2>/dev/null || true
-            stow --no-folding claude 2>/dev/null || true
+            stow -R --no-folding agents 2>/dev/null || true
+            stow -R --no-folding claude 2>/dev/null || true
         fi
 
         # Check if there's anything to commit
