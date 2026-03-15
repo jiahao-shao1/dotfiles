@@ -41,13 +41,6 @@ fi
 
 ZSH_CUSTOM="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
 
-if [ ! -d "$ZSH_CUSTOM/themes/powerlevel10k" ]; then
-    echo "Installing Powerlevel10k..."
-    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$ZSH_CUSTOM/themes/powerlevel10k"
-else
-    echo "Powerlevel10k already installed."
-fi
-
 if [ ! -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]; then
     echo "Installing zsh-syntax-highlighting..."
     git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting.git "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting"
@@ -69,19 +62,16 @@ else
     echo "you-should-use already installed."
 fi
 
-# 2b. Install MesloLGS NF font (required by Powerlevel10k in iTerm2)
-if [[ "$(uname)" == "Darwin" ]]; then
-    FONT_DIR="$HOME/Library/Fonts"
-    if ! ls "$FONT_DIR"/MesloLGS*NF* &>/dev/null; then
-        echo "Installing MesloLGS NF fonts..."
-        FONT_BASE="https://github.com/romkatv/powerlevel10k-media/raw/master"
-        for font in "MesloLGS NF Regular.ttf" "MesloLGS NF Bold.ttf" "MesloLGS NF Italic.ttf" "MesloLGS NF Bold Italic.ttf"; do
-            curl -sL "$FONT_BASE/${font// /%20}" -o "$FONT_DIR/$font"
-        done
-        echo "MesloLGS NF fonts installed."
+# 2b. Install Starship prompt
+if ! command -v starship &>/dev/null; then
+    echo "Installing Starship..."
+    if [[ "$(uname)" == "Darwin" ]]; then
+        brew install starship
     else
-        echo "MesloLGS NF fonts already installed."
+        curl -sS https://starship.rs/install.sh | sh -s -- -y
     fi
+else
+    echo "Starship already installed."
 fi
 
 # 2c. Configure iTerm2 to load preferences from dotfiles
@@ -92,10 +82,10 @@ if [[ "$(uname)" == "Darwin" ]] && [ -d "$DOTFILES_DIR/iterm2" ]; then
     echo "iTerm2 will load preferences from $DOTFILES_DIR/iterm2"
 fi
 
-# 2d. Install Ghostty companion tools (macOS only: Starship, Fastfetch, Btop, Maple Mono font)
+# 2d. Install Ghostty companion tools (macOS only: Fastfetch, Btop, Maple Mono font)
 if [[ "$(uname)" == "Darwin" ]]; then
     echo "Installing Ghostty companion tools..."
-    for tool in starship fastfetch btop; do
+    for tool in fastfetch btop; do
         if ! command -v "$tool" &>/dev/null; then
             echo "  Installing $tool..."
             brew install "$tool"
