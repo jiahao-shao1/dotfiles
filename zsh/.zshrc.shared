@@ -2,12 +2,26 @@
 # Shared ZSH Configuration (synced via dotfiles)
 # ============================================================================
 
+# Powerlevel10k instant prompt (skipped when using Starship)
+if [[ -z "$USE_STARSHIP" ]] && [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 # Oh My Zsh
 export ZSH="$HOME/.oh-my-zsh"
-ZSH_THEME=""
+if [[ -n "$USE_STARSHIP" ]]; then
+  ZSH_THEME=""
+else
+  ZSH_THEME="powerlevel10k/powerlevel10k"
+fi
 plugins=(git zsh-autosuggestions zsh-syntax-highlighting you-should-use)
 export TERM=xterm-256color
 source $ZSH/oh-my-zsh.sh
+
+# p10k config (skipped when using Starship)
+if [[ -z "$USE_STARSHIP" ]]; then
+  [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+fi
 
 # Locale
 export LANG=en_US.UTF-8
