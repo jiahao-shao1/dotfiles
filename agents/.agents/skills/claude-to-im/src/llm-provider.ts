@@ -113,10 +113,10 @@ export function resolveClaudeCliPath(): string | undefined {
         'C:\\Program Files\\claude\\claude.exe',
       ].filter(Boolean)
     : [
+        `${process.env.HOME}/.local/bin/claude`,
         '/usr/local/bin/claude',
         '/opt/homebrew/bin/claude',
         `${process.env.HOME}/.npm-global/bin/claude`,
-        `${process.env.HOME}/.local/bin/claude`,
         `${process.env.HOME}/.claude/local/claude`,
       ];
   for (const p of candidates) {

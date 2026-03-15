@@ -55,7 +55,7 @@ async function resolveProvider(config: Config, pendingPerms: PendingPermissions)
   if (!cliPath) {
     console.error(
       '[claude-to-im] FATAL: Cannot find the `claude` CLI executable.\n' +
-      '  Tried: CTI_CLAUDE_CODE_EXECUTABLE env, /usr/local/bin/claude, /opt/homebrew/bin/claude, ~/.npm-global/bin/claude, ~/.local/bin/claude\n' +
+      '  Tried: CTI_CLAUDE_CODE_EXECUTABLE env, ~/.local/bin/claude, /usr/local/bin/claude, /opt/homebrew/bin/claude, ~/.npm-global/bin/claude\n' +
       '  Fix: Install Claude Code CLI (https://docs.anthropic.com/en/docs/claude-code) or set CTI_CLAUDE_CODE_EXECUTABLE=/path/to/claude\n' +
       '  Or: Set CTI_RUNTIME=codex to use Codex instead',
     );
