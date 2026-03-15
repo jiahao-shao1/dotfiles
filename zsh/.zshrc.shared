@@ -9,6 +9,9 @@ plugins=(git zsh-autosuggestions zsh-syntax-highlighting you-should-use)
 export TERM=xterm-256color
 source $ZSH/oh-my-zsh.sh
 
+# PATH (must be before starship init)
+export PATH="$HOME/.local/bin:$PATH"
+
 # Starship prompt
 eval "$(starship init zsh)"
 
@@ -20,13 +23,16 @@ export LC_ALL=en_US.UTF-8
 setopt no_nomatch
 export ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=YES
 
-# PATH
-export PATH="$HOME/.local/bin:$PATH"
-
-# NVM
+# NVM (lazy load)
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+function _nvm_lazy_init() {
+    unfunction nvm node npm npx 2>/dev/null
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+}
+for cmd in nvm node npm npx; do
+    eval "function $cmd() { _nvm_lazy_init; $cmd \"\$@\" }"
+done
 
 # ============================================================================
 # Aliases
