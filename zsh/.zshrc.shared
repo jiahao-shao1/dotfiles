@@ -2,7 +2,11 @@
 # Shared ZSH Configuration (synced via dotfiles)
 # ============================================================================
 
-# Powerlevel10k instant prompt (skipped when using Starship)
+# macOS: Starship prompt | Linux: Powerlevel10k
+if [[ "$(uname)" == "Darwin" ]]; then
+  USE_STARSHIP=1
+fi
+
 if [[ -z "$USE_STARSHIP" ]] && [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
@@ -18,7 +22,6 @@ plugins=(git zsh-autosuggestions zsh-syntax-highlighting you-should-use)
 export TERM=xterm-256color
 source $ZSH/oh-my-zsh.sh
 
-# p10k config (skipped when using Starship)
 if [[ -z "$USE_STARSHIP" ]]; then
   [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 fi
