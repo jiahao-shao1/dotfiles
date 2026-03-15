@@ -145,6 +145,12 @@ if [ -e "$HOME/.tmux.conf" ] && [ ! -L "$HOME/.tmux.conf" ]; then
     mv "$HOME/.tmux.conf" "$BACKUP_DIR/.tmux.conf"
 fi
 
+# 4a2. Backup ghostty config if it's a real file (macOS only)
+if [[ "$(uname)" == "Darwin" ]] && [ -e "$HOME/.config/ghostty/config" ] && [ ! -L "$HOME/.config/ghostty/config" ]; then
+    mkdir -p "$BACKUP_DIR"
+    mv "$HOME/.config/ghostty/config" "$BACKUP_DIR/ghostty-config"
+fi
+
 # 4b. Backup other managed files
 NEED_BACKUP=false
 
@@ -185,6 +191,11 @@ echo "Stowing zsh..."
 stow -R --no-folding zsh
 echo "Stowing tmux..."
 stow -R tmux
+if [[ "$(uname)" == "Darwin" ]]; then
+    echo "Stowing ghostty..."
+    mkdir -p "$HOME/.config/ghostty"
+    stow -R --no-folding ghostty
+fi
 
 # 7. Commit and push newly imported skills
 cd "$DOTFILES_DIR"
