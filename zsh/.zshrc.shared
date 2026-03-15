@@ -50,6 +50,7 @@ done
 # ============================================================================
 
 # General
+alias ll="ls -lah"
 alias py="python"
 alias upip="python -m uv pip install"
 alias c7="chmod 777 -R"
