@@ -92,7 +92,26 @@ if [[ "$(uname)" == "Darwin" ]] && [ -d "$DOTFILES_DIR/iterm2" ]; then
     echo "iTerm2 will load preferences from $DOTFILES_DIR/iterm2"
 fi
 
-# 2d. Install Agent Reach (internet access for AI agents)
+# 2d. Install Ghostty companion tools (macOS only: Starship, Fastfetch, Btop, Maple Mono font)
+if [[ "$(uname)" == "Darwin" ]]; then
+    echo "Installing Ghostty companion tools..."
+    for tool in starship fastfetch btop; do
+        if ! command -v "$tool" &>/dev/null; then
+            echo "  Installing $tool..."
+            brew install "$tool"
+        else
+            echo "  $tool already installed."
+        fi
+    done
+    if ! ls "$HOME/Library/Fonts"/MapleMono-NF-CN* &>/dev/null; then
+        echo "  Installing Maple Mono NF CN font..."
+        brew install --cask font-maple-mono-nf-cn
+    else
+        echo "  Maple Mono NF CN font already installed."
+    fi
+fi
+
+# 2e. Install Agent Reach (internet access for AI agents)
 if ! command -v agent-reach &>/dev/null; then
     echo "Installing Agent Reach..."
     pip install agent-reach
