@@ -141,6 +141,12 @@ if [[ "$(uname)" == "Darwin" ]] && [ -e "$HOME/.config/ghostty/config" ] && [ ! 
     mv "$HOME/.config/ghostty/config" "$BACKUP_DIR/ghostty-config"
 fi
 
+# 4a3. Backup starship config if it's a real file
+if [ -e "$HOME/.config/starship.toml" ] && [ ! -L "$HOME/.config/starship.toml" ]; then
+    mkdir -p "$BACKUP_DIR"
+    mv "$HOME/.config/starship.toml" "$BACKUP_DIR/starship.toml"
+fi
+
 # 4b. Backup other managed files
 NEED_BACKUP=false
 
@@ -179,6 +185,8 @@ echo "Stowing claude..."
 stow -R --no-folding claude
 echo "Stowing zsh..."
 stow -R --no-folding zsh
+echo "Stowing starship..."
+stow -R --no-folding starship
 echo "Stowing tmux..."
 stow -R tmux
 if [[ "$(uname)" == "Darwin" ]]; then
