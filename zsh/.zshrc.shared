@@ -34,16 +34,18 @@ export LC_ALL=en_US.UTF-8
 setopt no_nomatch
 export ITERM_ENABLE_SHELL_INTEGRATION_WITH_TMUX=YES
 
-# NVM (lazy load)
+# NVM (lazy load, only if nvm is installed)
 export NVM_DIR="$HOME/.nvm"
-function _nvm_lazy_init() {
-    unfunction nvm node npm npx 2>/dev/null
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-}
-for cmd in nvm node npm npx; do
-    eval "function $cmd() { _nvm_lazy_init; $cmd \"\$@\" }"
-done
+if [ -s "$NVM_DIR/nvm.sh" ]; then
+    function _nvm_lazy_init() {
+        unfunction nvm node npm npx 2>/dev/null
+        \. "$NVM_DIR/nvm.sh"
+        [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+    }
+    for cmd in nvm node npm npx; do
+        eval "function $cmd() { _nvm_lazy_init; $cmd \"\$@\" }"
+    done
+fi
 
 # ============================================================================
 # Aliases
