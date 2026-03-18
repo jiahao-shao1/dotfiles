@@ -104,7 +104,7 @@ fi
 # 2e. Install Agent Reach (internet access for AI agents)
 if ! command -v agent-reach &>/dev/null; then
     echo "Installing Agent Reach..."
-    pip install agent-reach
+    PIP_CONFIG_FILE=/dev/null pip install https://github.com/Panniantong/agent-reach/archive/main.zip
     agent-reach install --env=auto --safe
 else
     echo "Agent Reach already installed."
