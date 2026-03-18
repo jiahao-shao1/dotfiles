@@ -4,6 +4,29 @@ English | [中文](README.zh-CN.md)
 
 > Bootstrap Claude Code configuration for new projects — directory skeleton, agents, hooks, and CLAUDE.md, all in one command.
 
+## Quick Start
+
+Install the skill into your Claude Code environment:
+
+```bash
+# Clone into your skills directory
+git clone https://github.com/jiahao-shao1/init-project.git ~/.claude/skills/init-project
+```
+
+Then in any project, tell Claude Code:
+
+```
+初始化项目
+```
+
+or
+
+```
+init project
+```
+
+Claude Code will automatically trigger this skill and walk you through the setup.
+
 ## Overview
 
 This skill automates the setup of Claude Code best practices for any new project. It generates a complete configuration skeleton and interactively fills in project-specific details through a guided workflow.

@@ -4,6 +4,29 @@
 
 > 为新项目一键配置 Claude Code 最佳实践：目录骨架、Agent、Hooks 和 CLAUDE.md。
 
+## 快速开始
+
+将 skill 安装到你的 Claude Code 环境：
+
+```bash
+# 克隆到 skills 目录
+git clone https://github.com/jiahao-shao1/init-project.git ~/.claude/skills/init-project
+```
+
+然后在任意项目中，对 Claude Code 说：
+
+```
+初始化项目
+```
+
+或
+
+```
+init project
+```
+
+Claude Code 会自动触发该 skill，引导你完成配置。
+
 ## 概述
 
 该 Skill 自动化配置新项目的 Claude Code 最佳实践，生成完整的配置骨架，并通过交互式工作流填充项目特定信息。
