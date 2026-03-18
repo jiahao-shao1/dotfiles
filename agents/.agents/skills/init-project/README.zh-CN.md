@@ -6,11 +6,8 @@
 
 ## 快速开始
 
-将 skill 安装到你的 Claude Code 环境：
-
 ```bash
-# 克隆到 skills 目录
-git clone https://github.com/jiahao-shao1/init-project.git ~/.claude/skills/init-project
+npx skills add https://github.com/jiahao-shao1/init-project
 ```
 
 然后在任意项目中，对 Claude Code 说：

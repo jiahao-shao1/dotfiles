@@ -6,11 +6,8 @@ English | [中文](README.zh-CN.md)
 
 ## Quick Start
 
-Install the skill into your Claude Code environment:
-
 ```bash
-# Clone into your skills directory
-git clone https://github.com/jiahao-shao1/init-project.git ~/.claude/skills/init-project
+npx skills add https://github.com/jiahao-shao1/init-project
 ```
 
 Then in any project, tell Claude Code:
