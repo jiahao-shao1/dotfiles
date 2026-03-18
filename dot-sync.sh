@@ -118,6 +118,20 @@ case "${1:-}" in
 
         cd "$DOTFILES_DIR"
 
+        # Convert real local skill dirs to stow symlinks
+        # (remove local copies that already exist in repo so stow can create symlinks)
+        for skill_dir in "$AGENTS_LOCAL"/*/; do
+            skill=$(basename "$skill_dir")
+            if [ -f "$skill_dir/SKILL.md" ] && [ ! -L "$skill_dir/SKILL.md" ] && [ -d "$AGENTS_REPO/$skill" ]; then
+                if is_gitignored "$skill"; then
+                    continue
+                fi
+                echo -e "${GREEN}→ STOW:${NC} $skill"
+                rm -rf "$skill_dir"
+                changes=$((changes + 1))
+            fi
+        done
+
         # Restow to pick up new symlinks
         if [ $changes -gt 0 ]; then
             echo "Restowing..."
