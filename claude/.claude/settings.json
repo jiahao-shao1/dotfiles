@@ -6,10 +6,6 @@
           {
             "type": "command",
             "command": "~/dotfiles/claude-notify.sh '🤖 Claude Code finished working'"
-          },
-          {
-            "type": "command",
-            "command": "[ \"$(hostname)\" = 'JadenMacBook-Pro.local' ] && ~/dotfiles/dot-sync.sh >/dev/null 2>&1 || true"
           }
         ]
       }
