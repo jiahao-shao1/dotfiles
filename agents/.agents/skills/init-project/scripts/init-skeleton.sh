@@ -1,7 +1,7 @@
 #!/bin/bash
-# init-skeleton.sh — 为新项目生成 Claude Code 配置骨架
-# 用法: bash init-skeleton.sh [项目根目录]
-# 幂等：已存在的文件不覆盖
+# init-skeleton.sh — Generate Claude Code configuration skeleton for new projects
+# Usage: bash init-skeleton.sh [project-root]
+# Idempotent: existing files are never overwritten
 
 set -euo pipefail
 
@@ -11,7 +11,7 @@ cd "$PROJECT_ROOT"
 CREATED=()
 SKIPPED=()
 
-# 辅助函数：创建文件（不覆盖）
+# Helper: create file (no overwrite)
 create_file() {
     local filepath="$1"
     local content="$2"
@@ -24,17 +24,17 @@ create_file() {
     fi
 }
 
-# 辅助函数：创建空目录
+# Helper: ensure directory exists
 ensure_dir() {
     local dirpath="$1"
     mkdir -p "$dirpath"
 }
 
-# 获取项目名（从目录名推断）
+# Infer project name from directory
 PROJECT_NAME=$(basename "$(pwd)")
 
 # ============================================================
-# 1. 目录结构
+# 1. Directory structure
 # ============================================================
 ensure_dir ".claude/rules"
 ensure_dir ".claude/knowledge"
@@ -44,11 +44,11 @@ ensure_dir ".claude/worktrees"
 ensure_dir ".agents/skills"
 
 # ============================================================
-# 2. 通用 Hooks
+# 2. General-purpose hooks
 # ============================================================
 create_file ".claude/hooks/auto-format-python.sh" '#!/bin/bash
-# Claude Code PostToolUse hook: 编辑 Python 文件后自动运行 ruff format
-# 通过 $TOOL_INPUT 环境变量获取编辑的文件路径
+# Claude Code PostToolUse hook: auto ruff format after editing Python files
+# Gets edited file path via $TOOL_INPUT environment variable
 
 FILE_PATH=$(echo "$TOOL_INPUT" | python3 -c "
 import sys, json
@@ -59,12 +59,12 @@ except:
     print('"'"''"'"')
 " 2>/dev/null)
 
-# 只处理 .py 文件，排除 third_party/
+# Only process .py files, exclude third_party/
 if [[ "$FILE_PATH" == *.py ]] && [[ "$FILE_PATH" != */third_party/* ]]; then
-    # 运行 ruff format（静默，只在有问题时输出）
+    # Run ruff format (quiet, only output on issues)
     ruff format "$FILE_PATH" --quiet 2>/dev/null
 
-    # 运行 ruff check --fix（自动修复 import 排序等）
+    # Run ruff check --fix (auto-fix import sorting etc.)
     OUTPUT=$(ruff check --fix "$FILE_PATH" 2>/dev/null)
     if [ -n "$OUTPUT" ]; then
         echo "$OUTPUT" | head -10
@@ -74,11 +74,11 @@ fi'
 chmod +x ".claude/hooks/auto-format-python.sh" 2>/dev/null || true
 
 # ============================================================
-# 3. 通用 Agent 定义
+# 3. General-purpose agent definitions
 # ============================================================
 create_file ".claude/agents/code-verifier.md" '---
 name: code-verifier
-description: 代码质量检查。在代码修改后、commit 前主动运行 ruff lint/format 和 pytest，自动修复格式问题并报告结果。
+description: Code quality check. Proactively runs ruff lint/format and pytest after code changes, before commit. Auto-fixes formatting issues and reports results.
 model: haiku
 tools:
   - Read
@@ -89,15 +89,15 @@ tools:
 
 # Code Verifier
 
-## 何时使用
+## When to Use
 
-**主动使用**：用户完成代码修改、准备 commit 前。
+**Proactive**: after user completes code changes, before commit.
 
-## 检查流程
+## Check Flow
 
-按顺序执行以下步骤：
+Execute the following steps in order:
 
-### 1. 识别变更文件
+### 1. Identify Changed Files
 
 ```bash
 git diff --name-only HEAD
@@ -105,7 +105,7 @@ git diff --name-only --cached
 git ls-files --others --exclude-standard
 ```
 
-仅检查 `.py` 文件，跳过 `third_party/`、`outputs/`、`__pycache__/`。
+Only check `.py` files, skip `third_party/`, `outputs/`, `__pycache__/`.
 
 ### 2. Ruff Lint + Format
 
@@ -114,35 +114,35 @@ ruff check --fix .
 ruff format .
 ```
 
-如果 ruff 不可用，回退到报告提示安装。
+If ruff is unavailable, fall back to reporting an install prompt.
 
-### 3. 运行测试
+### 3. Run Tests
 
 ```bash
 pytest tests/ -v --tb=short -q 2>&1 | tail -30
 ```
 
-### 4. 报告结果
+### 4. Report Results
 
 ```
-## 检查结果
+## Check Results
 
-| 检查项 | 状态 | 说明 |
-|--------|------|------|
-| Ruff Lint | PASS/FAIL/SKIP | 修复了 N 个问题 |
-| Ruff Format | PASS/FAIL/SKIP | 格式化了 N 个文件 |
+| Check | Status | Notes |
+|-------|--------|-------|
+| Ruff Lint | PASS/FAIL/SKIP | Fixed N issues |
+| Ruff Format | PASS/FAIL/SKIP | Formatted N files |
 | Tests | PASS/FAIL/SKIP | N passed, M failed |
 ```
 
-## 注意事项
+## Notes
 
-- 不修改 `third_party/` 下的代码
-- 测试失败时报告失败原因，不自行修复
-- 如果 ruff 未安装，跳过 lint/format 步骤并提示安装'
+- Do not modify code under `third_party/`
+- On test failure, report the cause — do not auto-fix
+- If ruff is not installed, skip lint/format steps and prompt to install'
 
 create_file ".claude/agents/planner.md" '---
 name: planner
-description: 代码库研究。在 brainstorming 或 writing-plans 阶段需要深入了解代码结构时使用，研究代码后输出发现和建议。
+description: Codebase researcher. Use during brainstorming or writing-plans phases when deep understanding of code structure is needed. Researches code and outputs findings and suggestions.
 model: opus
 tools:
   - Read
@@ -150,57 +150,57 @@ tools:
   - Glob
 ---
 
-# Planner（代码研究）
+# Planner (Codebase Researcher)
 
-## 定位
+## Role
 
-本 agent 是 `/brainstorming` 和 `/writing-plans` 工作流的辅助工具，负责系统性研究代码库，输出发现供上层工作流使用。
+This agent assists the `/brainstorming` and `/writing-plans` workflows by systematically researching the codebase and outputting findings for the parent workflow.
 
-**不是独立的规划器**——实现计划由 `/writing-plans` skill 负责。
+**Not a standalone planner** — implementation plans are handled by the `/writing-plans` skill.
 
-## 何时使用
+## When to Use
 
-- `/brainstorming` 的 "Explore project context" 阶段需要深入代码研究
-- `/writing-plans` 需要确认代码结构、找到可复用的模式
-- 涉及 3+ 文件的任务需要先摸清代码关系
+- `/brainstorming` "Explore project context" phase needs deep code research
+- `/writing-plans` needs to confirm code structure or find reusable patterns
+- Tasks involving 3+ files need upfront code relationship mapping
 
-**不要用于**：单文件修改、已经清楚代码结构的任务。
+**Do not use for**: single-file changes, tasks where code structure is already clear.
 
-## 工作方式
+## How It Works
 
-### 1. 接收研究问题
+### 1. Receive Research Question
 
-从 brainstorming 或 writing-plans 获取具体的研究问题。
+Get a specific research question from brainstorming or writing-plans.
 
-### 2. 系统性搜索
+### 2. Systematic Search
 
-按目录重点研究，使用 Glob、Grep、Read 工具。
+Research by directory focus, using Glob, Grep, Read tools.
 
-### 3. 输出发现
+### 3. Output Findings
 
 ```markdown
-## 研究发现
+## Research Findings
 
-### 相关文件
-- `file_a.py:L42` — [做什么，为什么相关]
+### Relevant Files
+- `file_a.py:L42` — [what it does, why it matters]
 
-### 现有模式
-- [可复用的模式]
+### Existing Patterns
+- [reusable patterns]
 
-### 建议
-- [建议]
+### Suggestions
+- [suggestions]
 
-### 风险点
-- [需要注意的约束]
+### Risks
+- [constraints to watch out for]
 ```
 
-## 注意事项
+## Notes
 
-- 只读操作，不修改代码
-- 引用具体的文件路径和行号'
+- Read-only operations, no code modifications
+- Always cite specific file paths and line numbers'
 
 # ============================================================
-# 4. Settings.json（项目级）
+# 4. Settings.json (project-level)
 # ============================================================
 create_file ".claude/settings.json" '{
   "hooks": {
@@ -219,147 +219,147 @@ create_file ".claude/settings.json" '{
 }'
 
 # ============================================================
-# 5. CLAUDE.md 骨架
+# 5. CLAUDE.md skeleton
 # ============================================================
-create_file "CLAUDE.md" "# ${PROJECT_NAME} 项目说明
+create_file "CLAUDE.md" "# ${PROJECT_NAME} Project Guide
 
-## 项目概述
-<!-- init-project: 待填充 -->
+## Project Overview
+<!-- init-project: placeholder -->
 
-## 目录结构和功能
-<!-- init-project: 待填充 -->
+## Directory Structure
+<!-- init-project: placeholder -->
 
-## 开发工作流
+## Dev Workflow
 
-本项目使用分阶段工作流：
+This project uses a phased workflow:
 
 \`\`\`
 /brainstorming  →  /writing-plans  →  /subagent-driven-development  →  code-verifier
-  探索想法            制定计划              执行计划                     质量检查
+  explore ideas       make a plan          execute the plan             quality check
 \`\`\`
 
-### 阶段说明
+### Phase Guide
 
-| 场景 | 起始阶段 |
-|------|---------|
-| 新功能 / 架构变更 / 研究想法 | 从 \`/brainstorming\` 开始 |
-| 需求已明确，需要实现计划 | 从 \`/writing-plans\` 开始 |
-| 小修改（单文件、bug fix） | 直接修改 + \`code-verifier\` |
+| Scenario | Starting phase |
+|----------|---------------|
+| New feature / architecture change / research idea | Start from \`/brainstorming\` |
+| Requirements already clear, need implementation plan | Start from \`/writing-plans\` |
+| Small change (single file, bug fix) | Direct edit + \`code-verifier\` |
 
-<!-- init-project: 如有项目特有的工作流阶段，在此补充 -->
+<!-- init-project: add project-specific workflow stages here if needed -->
 
-## 开发指南
-<!-- init-project: 待填充 -->
+## Dev Guide
+<!-- init-project: placeholder -->
 
-## 经验沉淀
+## Experience Capture
 
-当 session 中解决了非平凡问题（调试 bug、发现 workaround、设计 trade-off 等），**立即**将经验写入 \`.claude/knowledge/\` 对应的领域文件，不要等 session 结束。
+When a non-trivial problem is solved during a session (debugging, workaround, design trade-off, etc.), **immediately** write the experience to the corresponding domain file in \`.claude/knowledge/\` — don't wait until the session ends.
 
-### 写入规范
+### Writing Guidelines
 
-- **文件命名**：按领域主题，如 \`api-integration.md\`、\`deployment.md\`。遇到新领域直接建文件。
-- **条目格式**：
+- **File naming**: by domain topic, e.g., \`api-integration.md\`, \`deployment.md\`. Create new files for new domains.
+- **Entry format**:
 
 \`\`\`markdown
-## YYYY-MM-DD: 简短标题
+## YYYY-MM-DD: Brief Title
 
-**问题**: 遇到了什么
-**解法**: 怎么解决的
-**教训**: 以后应该注意什么
-**文件**: 涉及的代码文件
-**Commit**: 相关的 git commit hash
+**Problem**: what happened
+**Solution**: how it was resolved
+**Lesson**: what to watch for next time
+**Files**: code files involved
+**Commit**: related git commit hash
 \`\`\`
 
-### 什么该写
+### What to Write
 
-- 调试中发现的 bug 和根因
-- 不明显的 workaround 或 API 行为
-- 设计决策及其 trade-off
-- 参数调优的经验
+- Bugs and root causes discovered during debugging
+- Non-obvious workarounds or API behaviors
+- Design decisions and their trade-offs
+- Parameter tuning experiences
 
-### 什么不该写
+### What Not to Write
 
-- 纯代码改动记录（由 git log 追踪）
-- 文档中已有的内容
-- 临时的探索性尝试（没有结论的）
+- Pure code change records (tracked by git log)
+- Content already in documentation
+- Temporary exploratory attempts (no conclusions)
 
-### 沉淀路径
+### Capture Path
 
 \`\`\`
-session 中发现 → .claude/knowledge/ (热经验)
-                         ↓ 经过多次验证
-                  .claude/rules/ (硬性规则)
+discovered in session → .claude/knowledge/ (hot experience)
+                                ↓ validated multiple times
+                         .claude/rules/ (hard rules)
 \`\`\`
 
-## 上下文管理
+## Context Management
 
 ### Compact Instructions
 
-当上下文被压缩（/compact 或自动触发）时，**必须保留**以下信息：
-- 当前任务目标和验收标准
-- 已做出的架构决策及其理由
-- 行为边界中的关键约束
-- 当前 worktree 分支名和工作进度
-- 尚未解决的阻塞问题
+When context is compressed (/compact or auto-triggered), the following **must be preserved**:
+- Current task goal and acceptance criteria
+- Architecture decisions made and their rationale
+- Key constraints from behavior boundaries
+- Current worktree branch name and work progress
+- Unresolved blocking issues
 
-### HANDOFF 模式
+### HANDOFF Mode
 
-长 session 即将结束或上下文接近上限时，主动写一份 \`HANDOFF.md\` 到项目根目录：
+When a long session is ending or context is near its limit, proactively write a \`HANDOFF.md\` to the project root:
 \`\`\`markdown
-## 当前进度
-## 尝试过什么（有效 / 无效）
-## 下一步
-## 关键决策和约束
+## Current Progress
+## What Was Tried (worked / didn't work)
+## Next Steps
+## Key Decisions and Constraints
 \`\`\`
-下一个 session 只需读 \`HANDOFF.md\` 即可接续工作。完成后删除该文件。
+The next session only needs to read \`HANDOFF.md\` to continue. Delete the file when done.
 
-### 上下文卫生
+### Context Hygiene
 
-- 任务切换 → \`/clear\`
-- 同任务进入新阶段 → \`/compact\`
-- 长命令输出用 \`| head -30\` 截断，避免污染上下文
+- Task switch → \`/clear\`
+- Same task, new phase → \`/compact\`
+- Long command output: pipe through \`| head -30\` to avoid context pollution
 
-## 行为边界
+## Behavior Boundaries
 
 ### Always Do
 
-- 修改代码前先读相关文件，理解上下文
-- 修改代码后运行相关单元测试
-- 遵循同模块已有的代码风格和命名规范
-<!-- init-project: 以下为示例，按项目需求修改 -->
-<!-- - 跨模块修改确保配置一致性 -->
-<!-- - API 调用包含超时保护和重试逻辑 -->
+- Read related files before modifying code to understand context
+- Run related unit tests after modifying code
+- Follow the existing code style and naming conventions of the same module
+<!-- init-project: examples below, modify per project needs -->
+<!-- - Ensure config consistency across cross-module changes -->
+<!-- - Include timeout protection and retry logic for API calls -->
 
 ### Ask First
 
-- 添加新的 Python 依赖
-<!-- init-project: 以下为示例，按项目需求修改 -->
-<!-- - 修改核心接口或配置结构 -->
-<!-- - 运行 GPU 测试（先检查可用性） -->
+- Adding new Python dependencies
+<!-- init-project: examples below, modify per project needs -->
+<!-- - Modifying core interfaces or config structure -->
+<!-- - Running GPU tests (check availability first) -->
 
 ### Never Do
 
-- 硬编码 API key、路径或端点
-- 直接修改 third_party/ 下的代码
-<!-- init-project: 以下为示例，按项目需求修改 -->
-<!-- - 修改不可变的接口签名 -->
-<!-- - 猜测集群配置或硬件拓扑 -->
+- Hardcode API keys, paths, or endpoints
+- Directly modify code under third_party/
+<!-- init-project: examples below, modify per project needs -->
+<!-- - Modify immutable interface signatures -->
+<!-- - Guess cluster configuration or hardware topology -->
 
-## 渐进式参考
-<!-- init-project: 待填充 -->
+## Progressive References
+<!-- init-project: placeholder -->
 "
 
 # ============================================================
-# 输出摘要
+# Output summary
 # ============================================================
 echo ""
 echo "=========================================="
-echo "  init-skeleton 完成"
+echo "  init-skeleton complete"
 echo "=========================================="
 echo ""
 
 if [ ${#CREATED[@]} -gt 0 ]; then
-    echo "✓ 创建了 ${#CREATED[@]} 个文件："
+    echo "✓ Created ${#CREATED[@]} files:"
     for f in "${CREATED[@]}"; do
         echo "  + $f"
     done
@@ -367,11 +367,11 @@ fi
 
 if [ ${#SKIPPED[@]} -gt 0 ]; then
     echo ""
-    echo "⊘ 跳过了 ${#SKIPPED[@]} 个已存在的文件："
+    echo "⊘ Skipped ${#SKIPPED[@]} existing files:"
     for f in "${SKIPPED[@]}"; do
         echo "  - $f"
     done
 fi
 
 echo ""
-echo "下一步：运行 Phase 2 交互式填充 CLAUDE.md"
+echo "Next: run Phase 2 to interactively fill CLAUDE.md"

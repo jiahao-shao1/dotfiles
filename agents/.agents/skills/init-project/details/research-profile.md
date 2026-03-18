@@ -1,68 +1,68 @@
-# Research Profile 说明
+# Research Profile Documentation
 
-research profile 在基础骨架之上，添加研究项目特有的结构。
+The research profile adds research-project-specific structure on top of the base skeleton.
 
-## 额外生成的内容
+## Additional Generated Content
 
-### 目录
+### Directories
 
-| 路径 | 用途 |
-|------|------|
-| `docs/reports/weekly/` | 周报输出目录 |
-| `docs/reports/worktree/` | Worktree 工作报告目录 |
-| `docs/plans/` | 设计文档和实现计划 |
+| Path | Purpose |
+|------|---------|
+| `docs/reports/weekly/` | Weekly report output |
+| `docs/reports/worktree/` | Worktree work reports |
+| `docs/plans/` | Design docs and implementation plans |
 
-### 文件
+### Files
 
-| 路径 | 内容 |
-|------|------|
-| `.claude/knowledge/experiments.md` | 实验注册表模板（日期、配置、三级路径、结果） |
-| `.claude/agents/domain-expert.md` | 领域专家 agent 骨架（需用户填写专长） |
+| Path | Content |
+|------|---------|
+| `.claude/knowledge/experiments.md` | Experiment registry template (date, config, three-tier paths, results) |
+| `.claude/agents/domain-expert.md` | Domain expert agent scaffold (user fills in expertise) |
 
-### CLAUDE.md 追加内容
+### CLAUDE.md Appended Content
 
-在 CLAUDE.md 末尾追加"扩展配置" section：
-- Agent 列表表格
-- Knowledge 文件列表表格
+Appends an "Extended Configuration" section to the end of CLAUDE.md:
+- Agent listing table
+- Knowledge file listing table
 
-## 实验注册表格式
+## Experiment Registry Format
 
-每次开始新实验时，追加条目到 `.claude/knowledge/experiments.md`：
+Append an entry to `.claude/knowledge/experiments.md` for each new experiment:
 
 ```markdown
-## 实验名称
+## Experiment Name
 
-- **日期**: YYYY-MM-DD ~ YYYY-MM-DD
-- **配置**: 简述配置要点
-- **路径**:
-  - 集群: /path/on/cluster
+- **Date**: YYYY-MM-DD ~ YYYY-MM-DD
+- **Config**: Brief config summary
+- **Paths**:
+  - Cluster: /path/on/cluster
   - OSS: oss://bucket/path
-  - 本地: outputs/path
-- **关键结果**:
-  - 指标 1: 数值
-  - 指标 2: 数值
-- **结论**: 一句话总结
+  - Local: outputs/path
+- **Key Results**:
+  - Metric 1: value
+  - Metric 2: value
+- **Conclusion**: One-line summary
 ```
 
-三级路径（集群/OSS/本地）用于追踪数据位置，方便同步和查找。
+The three-tier paths (cluster/OSS/local) track data location for easy sync and lookup.
 
-## 领域专家 Agent
+## Domain Expert Agent
 
-`domain-expert.md` 是一个骨架文件，需要用户根据项目填写：
+`domain-expert.md` is a scaffold that users fill in per project:
 
-- `description`: 领域专长描述
-- 何时使用: 触发场景
-- 重点目录: 应该研究的代码位置
-- 领域知识: 关键约束、接口约定、历史教训
+- `description`: Domain expertise description
+- When to use: Trigger scenarios
+- Focus directories: Code locations to research
+- Domain knowledge: Key constraints, interface contracts, historical lessons
 
-通常一个研究项目会有 1-3 个领域专家 agent（如 rl-training-expert、data-pipeline-expert）。
+Typically a research project has 1–3 domain expert agents (e.g., rl-training-expert, data-pipeline-expert).
 
-## 未来可扩展的 Profile
+## Future Extensible Profiles
 
-| Profile | 用途 | 状态 |
-|---------|------|------|
-| research | 研究项目（实验、报告、领域专家） | 已实现 |
-| web-app | Web 应用（组件结构、CI/CD） | 待开发 |
-| data-pipeline | 数据管道（ETL、监控） | 待开发 |
+| Profile | Purpose | Status |
+|---------|---------|--------|
+| research | Research projects (experiments, reports, domain experts) | Implemented |
+| web-app | Web applications (component structure, CI/CD) | Planned |
+| data-pipeline | Data pipelines (ETL, monitoring) | Planned |
 
-新 profile 通过添加 `scripts/init-<profile>-profile.sh` + `details/<profile>-profile.md` 实现。
+New profiles are added via `scripts/init-<profile>-profile.sh` + `details/<profile>-profile.md`.

@@ -1,272 +1,272 @@
-# CLAUDE.md 各 Section 交互填充引导
+# CLAUDE.md Section-by-Section Fill Guide
 
-Phase 2 中，逐个处理 `<!-- init-project: 待填充 -->` 占位符。每个 section 的处理流程：
+In Phase 2, process each `<!-- init-project: 待填充 -->` placeholder. Per-section flow:
 
 ```
-读代码库（自动） → 生成草稿（自动） → AskUserQuestion 确认 → 写入 CLAUDE.md
+Read codebase (auto) → Generate draft (auto) → AskUserQuestion to confirm → Write to CLAUDE.md
 ```
 
-用户回复 "skip" 可跳过任意 section，保留占位符。
+User can reply "skip" to skip any section and keep the placeholder.
 
 ---
 
-## Section: 项目概述
+## Section: Project Overview
 
-### 自动探索
+### Auto-exploration
 
 ```
-读取：README.md、pyproject.toml、package.json、Cargo.toml、go.mod
-提取：项目名、描述、主要依赖
+Read: README.md, pyproject.toml, package.json, Cargo.toml, go.mod
+Extract: project name, description, main dependencies
 ```
 
 ### AskUserQuestion
 
 ```
-项目概述草稿如下：
+Here's a draft project overview:
 
 ---
-{草稿内容}
+{draft content}
 ---
 
-这段描述准确吗？可以直接回车确认，或输入修改意见。回复 "skip" 跳过。
+Does this look accurate? Press Enter to confirm, type edits, or reply "skip" to skip.
 ```
 
-### 草稿模板
+### Draft Template
 
 ```markdown
-**{项目名}** 是一个 {类型}，{一句话目标}。
+**{project_name}** is a {type} that {one-line goal}.
 
-核心思路：{技术方法}。
+Core approach: {technical method}.
 
-## 工作流程
+## Workflow
 
-1. {步骤1}
-2. {步骤2}
+1. {step 1}
+2. {step 2}
 3. ...
 ```
 
 ---
 
-## Section: 目录结构和功能
+## Section: Directory Structure
 
-### 自动探索
+### Auto-exploration
 
 ```
-运行 ls 查看顶层目录
-读取各子目录的 README.md 或 __init__.py docstring
-识别：核心模块、第三方依赖、脚本、测试、文档
+Run ls to see top-level directories
+Read each subdirectory's README.md or __init__.py docstring
+Identify: core modules, third-party deps, scripts, tests, docs
 ```
 
 ### AskUserQuestion
 
 ```
-目录结构草稿如下：
+Here's a draft directory structure:
 
 ---
-{草稿内容：按模块列出目录和功能}
+{draft: modules listed by directory and function}
 ---
 
-有遗漏或要调整的吗？回车确认 / 输入修改意见 / "skip" 跳过。
+Anything missing or to adjust? Press Enter to confirm / type edits / "skip" to skip.
 ```
 
-### 草稿模板
+### Draft Template
 
-按以下分类组织：
+Organize by category:
 
 ```markdown
-### 核心模块
+### Core Modules
 
-#### `module_a/` - 功能描述
-- 子模块说明
-- 详见：`module_a/README.md`
+#### `module_a/` — Description
+- Submodule details
+- See: `module_a/README.md`
 
-### 第三方依赖
+### Third-Party Dependencies
 
 #### `third_party/xxx`
-- 用途说明
+- Purpose
 
-### 其他目录
+### Other Directories
 
-#### `scripts/` - 运行脚本
-#### `tests/` - 单元测试
-#### `docs/` - 文档
+#### `scripts/` — Run scripts
+#### `tests/` — Unit tests
+#### `docs/` — Documentation
 ```
 
 ---
 
-## Section: 开发工作流
+## Section: Dev Workflow
 
-### 自动探索
+### Auto-exploration
 
 ```
-检测：.github/workflows/、Makefile、Justfile、scripts/、Dockerfile
-检测：是否有 CI/CD、是否有 pre-commit hooks
+Detect: .github/workflows/, Makefile, Justfile, scripts/, Dockerfile
+Detect: CI/CD presence, pre-commit hooks
 ```
 
 ### AskUserQuestion
 
 ```
-检测到以下开发工具：{工具列表}
+Detected the following dev tools: {tool list}
 
-CLAUDE.md 中已写入默认的 brainstorming→plans→dev→verify 流程。
-你的项目有额外的工作流阶段吗？（如部署、发布、数据处理等）
+CLAUDE.md already includes the default brainstorming→plans→dev→verify flow.
+Does your project have additional workflow stages? (e.g., deployment, release, data processing)
 
-回车跳过 / 输入补充内容。
+Press Enter to skip / type additions.
 ```
 
 ---
 
-## Section: 开发指南
+## Section: Dev Guide
 
-### 自动探索
+### Auto-exploration
 
 ```
-检测：venv/conda 环境、.env 文件、Dockerfile、Makefile
-检测：测试框架（pytest/jest/go test）、lint 工具（ruff/eslint）
-读取：pyproject.toml 或 package.json 的 scripts 段
+Detect: venv/conda environment, .env files, Dockerfile, Makefile
+Detect: test framework (pytest/jest/go test), lint tools (ruff/eslint)
+Read: pyproject.toml or package.json scripts section
 ```
 
 ### AskUserQuestion
 
 ```
-开发指南草稿如下：
+Here's a draft dev guide:
 
 ---
-### 环境配置
+### Environment Setup
 
-{检测到的环境配置步骤}
+{detected setup steps}
 
-### 单元测试
+### Unit Tests
 
-{检测到的测试命令}
+{detected test commands}
 
-### {其他检测到的开发工具}
+### {other detected dev tools}
 ---
 
-有什么要补充或修改的吗？
+Anything to add or change?
 ```
 
 ---
 
-## Section: Always Do（项目特定条目）
+## Section: Always Do (Project-Specific Items)
 
-### 自动探索
+### Auto-exploration
 
 ```
-读取：.claude/rules/ 下已有的规则文件
-检测：lint 配置（pyproject.toml [tool.ruff]、.eslintrc）
-扫描：是否有多模块需要保持一致的配置
+Read: existing rule files under .claude/rules/
+Detect: lint config (pyproject.toml [tool.ruff], .eslintrc)
+Scan: multi-module configs that need consistency
 ```
 
 ### AskUserQuestion
 
 ```
-CLAUDE.md 中已写入 3 条通用的 Always Do 规则：
-- 修改代码前先读相关文件
-- 修改后运行相关单元测试
-- 遵循同模块代码风格
+CLAUDE.md already includes 3 generic Always Do rules:
+- Read related files before modifying code
+- Run related unit tests after modifications
+- Follow the same module's code style
 
-你的项目还有哪些**跨模块一致性要求**？例如：
-- 某些参数必须在多处保持一致
-- API 调用必须包含重试逻辑
-- 特定框架的约定必须遵守
+What **cross-module consistency requirements** does your project have? For example:
+- Certain parameters must stay in sync across modules
+- API calls must include retry logic
+- Specific framework conventions must be followed
 
-回车跳过 / 输入补充条目。
+Press Enter to skip / type additional items.
 ```
 
 ---
 
 ## Section: Ask First
 
-### 自动探索
+### Auto-exploration
 
 ```
-扫描：核心接口定义（抽象类、协议、签名）
-扫描：配置文件（yaml、toml、json）
-扫描：third_party/ 依赖
+Scan: core interface definitions (abstract classes, protocols, signatures)
+Scan: config files (yaml, toml, json)
+Scan: third_party/ dependencies
 ```
 
 ### AskUserQuestion
 
 ```
-已写入 1 条通用 Ask First 规则：
-- 添加新的 Python 依赖
+Already includes 1 generic Ask First rule:
+- Adding new Python dependencies
 
-你的项目中，**哪些文件或目录修改前必须先确认**？例如：
-- 核心配置文件
-- 公共接口/协议定义
-- 数据库 schema
-- CI/CD 配置
+Which **files or directories require confirmation before modifying** in your project? For example:
+- Core config files
+- Public interfaces/protocol definitions
+- Database schemas
+- CI/CD configuration
 
-回车跳过 / 输入补充条目。
+Press Enter to skip / type additional items.
 ```
 
 ---
 
 ## Section: Never Do
 
-### 自动探索
+### Auto-exploration
 
 ```
-检测：third_party/ 目录
-检测：.env、credentials 等敏感文件
-扫描：是否有"不可修改"的接口约定
-```
-
-### AskUserQuestion
-
-```
-已写入 2 条通用 Never Do 规则：
-- 硬编码 API key、路径或端点
-- 直接修改 third_party/ 下的代码
-
-你的项目有哪些**绝对不能碰的约定**？例如：
-- 不可修改的函数签名
-- 不能猜测的外部配置
-- 不能触碰的遗留代码
-
-回车跳过 / 输入补充条目。
-```
-
----
-
-## Section: 渐进式参考
-
-### 自动探索
-
-```
-扫描：docs/ 下的文档
-列出：.claude/agents/ 中的 agent
-列出：.agents/skills/ 中的 skill
+Detect: third_party/ directory
+Detect: .env, credentials, and other sensitive files
+Scan: immutable interface contracts
 ```
 
 ### AskUserQuestion
 
 ```
-根据代码库扫描，生成了以下参考表：
+Already includes 2 generic Never Do rules:
+- Hardcode API keys, paths, or endpoints
+- Directly modify code under third_party/
 
-| 任务 | 参考文件 |
-|------|---------|
-{自动生成的映射}
+What **absolute don't-touch conventions** does your project have? For example:
+- Immutable function signatures
+- External config that must not be guessed
+- Legacy code that must not be touched
 
-还有需要补充的任务→参考文件映射吗？
+Press Enter to skip / type additional items.
 ```
 
 ---
 
-## 完成后
+## Section: Progressive References
 
-所有 section 处理完毕后，输出汇总：
+### Auto-exploration
 
 ```
-## CLAUDE.md 填充完成
+Scan: docs under docs/
+List: agents in .claude/agents/
+List: skills in .agents/skills/
+```
 
-| Section | 状态 |
-|---------|------|
-| 项目概述 | ✓ 已填充 |
-| 目录结构 | ✓ 已填充 |
-| 开发工作流 | ⊘ 跳过 |
+### AskUserQuestion
+
+```
+Based on codebase scan, here's a generated reference table:
+
+| Task | Reference file |
+|------|---------------|
+{auto-generated mappings}
+
+Any additional task→reference file mappings to add?
+```
+
+---
+
+## After Completion
+
+Once all sections are processed, output a summary:
+
+```
+## CLAUDE.md Fill Complete
+
+| Section | Status |
+|---------|--------|
+| Project overview | ✓ Filled |
+| Directory structure | ✓ Filled |
+| Dev workflow | ⊘ Skipped |
 | ...     | ... |
 
-下一步：检查 CLAUDE.md 内容，然后 git add + commit。
+Next step: review CLAUDE.md content, then git add + commit.
 ```

@@ -1,7 +1,7 @@
 #!/bin/bash
-# init-research-profile.sh — 叠加 research profile
-# 用法: bash init-research-profile.sh [项目根目录]
-# 在 init-skeleton.sh 之后运行，添加研究项目特有的结构
+# init-research-profile.sh — Overlay research profile
+# Usage: bash init-research-profile.sh [project-root]
+# Run after init-skeleton.sh to add research-project-specific structure
 
 set -euo pipefail
 
@@ -28,46 +28,46 @@ ensure_dir() {
 }
 
 # ============================================================
-# 1. 报告目录
+# 1. Report directories
 # ============================================================
 ensure_dir "docs/reports/weekly"
 ensure_dir "docs/reports/worktree"
 ensure_dir "docs/plans"
 
 # ============================================================
-# 2. 实验注册表
+# 2. Experiment registry
 # ============================================================
-create_file ".claude/knowledge/experiments.md" '# 实验注册表
+create_file ".claude/knowledge/experiments.md" '# Experiment Registry
 
-记录所有实验的配置、路径和关键结果。
+Track all experiment configurations, paths, and key results.
 
-## 条目格式
+## Entry Format
 
 ```markdown
-## 实验名称
+## Experiment Name
 
-- **日期**: YYYY-MM-DD ~ YYYY-MM-DD
-- **配置**: 简述配置要点
-- **路径**:
-  - 集群: /path/on/cluster
+- **Date**: YYYY-MM-DD ~ YYYY-MM-DD
+- **Config**: Brief config summary
+- **Paths**:
+  - Cluster: /path/on/cluster
   - OSS: oss://bucket/path
-  - 本地: outputs/path
-- **关键结果**:
-  - 指标 1: 数值
-  - 指标 2: 数值
-- **结论**: 一句话总结
+  - Local: outputs/path
+- **Key Results**:
+  - Metric 1: value
+  - Metric 2: value
+- **Conclusion**: One-line summary
 ```
 
 ---
 
-<!-- 在此追加实验条目 -->'
+<!-- Append experiment entries below -->'
 
 # ============================================================
-# 3. 领域专家 Agent 骨架
+# 3. Domain expert agent scaffold
 # ============================================================
 create_file ".claude/agents/domain-expert.md" '---
 name: domain-expert
-description: <!-- 填写：领域专长描述，如 "XX 框架集成和调试专家" -->
+description: <!-- Fill in: domain expertise description, e.g. "XX framework integration and debugging expert" -->
 model: opus
 tools:
   - Read
@@ -77,60 +77,60 @@ tools:
 
 # Domain Expert
 
-## 定位
+## Role
 
-<!-- 填写：这个 agent 的专长领域是什么 -->
+<!-- Fill in: what is this agent'"'"'s area of expertise -->
 
-## 何时使用
+## When to Use
 
-<!-- 填写：什么场景下应该调用这个 agent -->
+<!-- Fill in: what scenarios should trigger this agent -->
 
-## 工作方式
+## How It Works
 
-### 1. 接收问题
+### 1. Receive Question
 
-从上层工作流获取领域相关的技术问题。
+Get domain-related technical questions from the parent workflow.
 
-### 2. 研究代码
+### 2. Research Code
 
-重点关注的目录和文件：
-<!-- 填写：列出这个 agent 应该重点研究的目录 -->
+Focus directories and files:
+<!-- Fill in: list directories this agent should focus on -->
 
-### 3. 输出建议
+### 3. Output Suggestions
 
-输出格式遵循 planner agent 的标准格式。
+Output format follows the planner agent standard format.
 
-## 领域知识
+## Domain Knowledge
 
-<!-- 填写：关键的领域约束、接口约定、历史教训 -->'
+<!-- Fill in: key domain constraints, interface contracts, historical lessons -->'
 
 # ============================================================
-# 4. 在 CLAUDE.md 中追加 research 相关内容
+# 4. Append research-related content to CLAUDE.md
 # ============================================================
 if [ -f "CLAUDE.md" ]; then
-    # 检查是否已有 research profile 标记
+    # Check if research profile marker already exists
     if ! grep -q "<!-- research-profile -->" "CLAUDE.md" 2>/dev/null; then
         cat >> "CLAUDE.md" << 'RESEARCH_EOF'
 
 <!-- research-profile -->
 
-## 扩展配置
+## Extended Configuration
 
-详见 `.claude/agents/`、`.claude/skills/`、`.claude/rules/`、`.claude/knowledge/` 获取专项指导。
+See `.claude/agents/`, `.claude/skills/`, `.claude/rules/`, `.claude/knowledge/` for specialized guidance.
 
 ### Agents
 
-| Agent | 用途 | Model | 触发场景 |
-|-------|------|-------|---------|
-| `planner` | 代码库研究 | opus | brainstorming/writing-plans 阶段 |
-| `code-verifier` | ruff + pytest | haiku | 代码修改后、commit 前 |
-| `domain-expert` | 领域专长 | opus | 涉及核心领域代码时 |
+| Agent | Purpose | Model | Trigger |
+|-------|---------|-------|---------|
+| `planner` | Codebase research | opus | brainstorming/writing-plans phases |
+| `code-verifier` | ruff + pytest | haiku | After code changes, before commit |
+| `domain-expert` | Domain expertise | opus | When touching core domain code |
 
-### Knowledge（经验积累）
+### Knowledge (Experience Capture)
 
-| 文件 | 内容 |
-|------|------|
-| `experiments.md` | **实验注册表**：所有实验的配置、路径、关键结果 |
+| File | Content |
+|------|---------|
+| `experiments.md` | **Experiment registry**: all experiment configs, paths, key results |
 RESEARCH_EOF
         CREATED+=("CLAUDE.md (appended research profile)")
     else
@@ -139,16 +139,16 @@ RESEARCH_EOF
 fi
 
 # ============================================================
-# 输出摘要
+# Output summary
 # ============================================================
 echo ""
 echo "=========================================="
-echo "  research profile 叠加完成"
+echo "  research profile overlay complete"
 echo "=========================================="
 echo ""
 
 if [ ${#CREATED[@]} -gt 0 ]; then
-    echo "✓ 创建/修改了 ${#CREATED[@]} 个文件："
+    echo "✓ Created/modified ${#CREATED[@]} files:"
     for f in "${CREATED[@]}"; do
         echo "  + $f"
     done
@@ -156,7 +156,7 @@ fi
 
 if [ ${#SKIPPED[@]} -gt 0 ]; then
     echo ""
-    echo "⊘ 跳过了 ${#SKIPPED[@]} 个已存在的文件："
+    echo "⊘ Skipped ${#SKIPPED[@]} existing files:"
     for f in "${SKIPPED[@]}"; do
         echo "  - $f"
     done
