@@ -116,6 +116,11 @@ if [ -d "$HOME/.agents/skills" ]; then
     for skill_dir in "$HOME/.agents/skills"/*/; do
         [ -d "$skill_dir" ] || continue
         skill=$(basename "$skill_dir")
+        # Skip if skill dir is a symlink OR has its own git repo (managed externally)
+        [ -L "${skill_dir%/}" ] && continue
+        [ -d "$skill_dir/.git" ] && continue
+        # Skip gitignored skills
+        is_gitignored "$skill" 2>/dev/null && continue
         # Skip stow-managed skills (SKILL.md is a symlink)
         [ -f "$skill_dir/SKILL.md" ] && [ ! -L "$skill_dir/SKILL.md" ] || continue
         if [ ! -d "$AGENTS_REPO/$skill" ]; then
@@ -177,12 +182,35 @@ fi
 # 5. Ensure ~/.claude directory exists
 mkdir -p "$HOME/.claude"
 
-# 6. Stow packages
+# 6. Detect machine type and build stow ignore list
+STOW_IGNORE=""
+MACHINE_HOST="$(hostname)"
+case "$MACHINE_HOST" in
+    JadenMacBook-Pro*) MACHINE_TYPE="personal" ;;
+    MacBook-Pro*)      MACHINE_TYPE="work-device" ;;
+    vilab12*)          MACHINE_TYPE="workstation" ;;
+    *)                 MACHINE_TYPE="unknown" ;;
+esac
+echo "Machine: $MACHINE_HOST ($MACHINE_TYPE)"
+
+if [ "$MACHINE_TYPE" = "personal" ] && [ -f "$DOTFILES_DIR/.internal-only-skills" ]; then
+    echo "Personal machine detected, skipping internal-only skills..."
+    while IFS= read -r skill; do
+        [ -z "$skill" ] && continue
+        STOW_IGNORE="$STOW_IGNORE --ignore=$skill"
+        # Remove existing symlinks for company skills
+        rm -rf "$HOME/.agents/skills/$skill"
+        rm -f "$HOME/.claude/skills/$skill"
+        echo "  - $skill"
+    done < "$DOTFILES_DIR/.internal-only-skills"
+fi
+
+# 7. Stow packages
 cd "$DOTFILES_DIR"
 echo "Stowing agents..."
-stow -R --no-folding agents
+stow -R --no-folding $STOW_IGNORE agents
 echo "Stowing claude..."
-stow -R --no-folding claude
+stow -R --no-folding $STOW_IGNORE claude
 echo "Stowing zsh..."
 stow -R --no-folding zsh
 echo "Stowing starship..."

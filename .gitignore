@@ -1,5 +1,3 @@
 .DS_Store
-agents/.agents/skills/robbyctl/
-agents/.agents/skills/sync-outputs/
-claude/.claude/skills/robbyctl
-claude/.claude/skills/sync-outputs
+agents/.agents/skills/robby-cluster-connect/
+claude/.claude/skills/robby-cluster-connect

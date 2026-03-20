@@ -33,6 +33,9 @@ sync_skills() {
     # 1. Find new local skills (real dirs, not stow symlink files)
     for skill_dir in "$AGENTS_LOCAL"/*/; do
         skill=$(basename "$skill_dir")
+        # Skip if skill dir is a symlink or has its own git repo (managed externally)
+        [ -L "${skill_dir%/}" ] && continue
+        [ -d "$skill_dir/.git" ] && continue
         # Check if the SKILL.md is a real file (not a stow symlink)
         if [ -f "$skill_dir/SKILL.md" ] && [ ! -L "$skill_dir/SKILL.md" ]; then
             # Skip gitignored skills (e.g. company-internal)
@@ -66,6 +69,8 @@ sync_skills() {
 
     # 3. Find modified skills (real local files that differ from repo)
     for skill_dir in "$AGENTS_LOCAL"/*/; do
+        [ -L "${skill_dir%/}" ] && continue
+        [ -d "$skill_dir/.git" ] && continue
         skill=$(basename "$skill_dir")
         if [ -f "$skill_dir/SKILL.md" ] && [ ! -L "$skill_dir/SKILL.md" ] && [ -d "$AGENTS_REPO/$skill" ]; then
             if ! diff -rq "$skill_dir" "$AGENTS_REPO/$skill" &>/dev/null; then
@@ -121,6 +126,8 @@ case "${1:-}" in
         # Convert real local skill dirs to stow symlinks
         # (remove local copies that already exist in repo so stow can create symlinks)
         for skill_dir in "$AGENTS_LOCAL"/*/; do
+            [ -L "${skill_dir%/}" ] && continue
+            [ -d "$skill_dir/.git" ] && continue
             skill=$(basename "$skill_dir")
             if [ -f "$skill_dir/SKILL.md" ] && [ ! -L "$skill_dir/SKILL.md" ] && [ -d "$AGENTS_REPO/$skill" ]; then
                 if is_gitignored "$skill"; then
