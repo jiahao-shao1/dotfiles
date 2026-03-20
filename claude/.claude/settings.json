@@ -32,6 +32,21 @@
     ],
     "SessionStart": []
   },
+  "extraKnownMarketplaces": {
+    "claude-hud": {
+      "source": {
+        "source": "github",
+        "repo": "jarrodwatts/claude-hud"
+      }
+    }
+  },
   "effortLevel": "medium",
-  "skipDangerousModePermissionPrompt": true
+  "skipDangerousModePermissionPrompt": true,
+  "enabledPlugins": {
+    "claude-hud@claude-hud": true
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "/Users/lane/.nvm/versions/node/v22.22.0/bin/node /Users/lane/.claude/plugins/cache/claude-hud/claude-hud/0.0.10/dist/index.js"
+  }
 }
