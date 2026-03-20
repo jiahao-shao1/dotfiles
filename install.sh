@@ -171,10 +171,28 @@ fi
 if [ "$NEED_BACKUP" = true ]; then
     echo "Backing up existing configs to $BACKUP_DIR ..."
     mkdir -p "$BACKUP_DIR"
-    [ -e "$HOME/.agents" ] && [ ! -L "$HOME/.agents" ] && mv "$HOME/.agents" "$BACKUP_DIR/.agents"
+    # Backup .agents skills (skip symlinks and git repos — they're managed externally)
+    if [ -e "$HOME/.agents" ] && [ ! -L "$HOME/.agents" ]; then
+        mkdir -p "$BACKUP_DIR/.agents/skills"
+        for skill_dir in "$HOME/.agents/skills"/*/; do
+            [ -d "$skill_dir" ] || continue
+            [ -L "${skill_dir%/}" ] && continue
+            [ -d "$skill_dir/.git" ] && continue
+            mv "$skill_dir" "$BACKUP_DIR/.agents/skills/"
+        done
+    fi
     [ -e "$HOME/.claude/settings.json" ] && [ ! -L "$HOME/.claude/settings.json" ] && mv "$HOME/.claude/settings.json" "$BACKUP_DIR/settings.json"
     [ -e "$HOME/.claude/CLAUDE.md" ] && [ ! -L "$HOME/.claude/CLAUDE.md" ] && mv "$HOME/.claude/CLAUDE.md" "$BACKUP_DIR/CLAUDE.md"
-    [ -e "$HOME/.claude/skills" ] && [ ! -L "$HOME/.claude/skills" ] && mv "$HOME/.claude/skills" "$BACKUP_DIR/skills"
+    # Backup .claude/skills (skip symlinks and git repos)
+    if [ -e "$HOME/.claude/skills" ] && [ ! -L "$HOME/.claude/skills" ]; then
+        mkdir -p "$BACKUP_DIR/skills"
+        for skill in "$HOME/.claude/skills"/*/; do
+            [ -d "$skill" ] || continue
+            [ -L "${skill%/}" ] && continue
+            [ -d "$skill/.git" ] && continue
+            mv "$skill" "$BACKUP_DIR/skills/"
+        done
+    fi
 else
     echo "No existing configs to backup (or already symlinked)."
 fi
