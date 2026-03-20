@@ -146,9 +146,26 @@ case "${1:-}" in
             exit 0
         fi
 
-        # Commit and push
+        # Commit and push to all configured remotes
         git commit -m "sync: $(date +%Y-%m-%d) skills and config update"
-        git push
+
+        pushed=0
+        for remote in internal-git origin; do
+            if git remote get-url "$remote" &>/dev/null; then
+                echo "Pushing to $remote..."
+                if git push "$remote" master 2>/dev/null; then
+                    echo -e "${GREEN}  ✓ $remote${NC}"
+                    pushed=$((pushed + 1))
+                else
+                    echo -e "${YELLOW}  ✗ $remote (skipped)${NC}"
+                fi
+            fi
+        done
+
+        if [ $pushed -eq 0 ]; then
+            echo -e "${RED}No remote pushed successfully.${NC}"
+            exit 1
+        fi
         echo -e "${GREEN}=== Synced! ===${NC}"
         ;;
 esac

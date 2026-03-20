@@ -201,7 +201,9 @@ git add -A
 if ! git diff --cached --quiet; then
     echo "Pushing newly imported skills to repo..."
     git commit -m "sync: import local skills from $(hostname)"
-    git push
+    for remote in internal-git origin; do
+        git remote get-url "$remote" &>/dev/null && git push "$remote" master 2>/dev/null && break
+    done
 fi
 
 # 8. Ensure .zshrc sources .zshrc.shared
