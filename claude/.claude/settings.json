@@ -47,6 +47,6 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "/Users/lane/.nvm/versions/node/v22.22.0/bin/node /Users/lane/.claude/plugins/cache/claude-hud/claude-hud/0.0.10/dist/index.js"
+    "command": "PATH=\"$HOME/.nvm/versions/node/$(ls $HOME/.nvm/versions/node/ | sort -V | tail -1)/bin:$PATH\" node ~/.claude/plugins/cache/claude-hud/claude-hud/*/dist/index.js"
   }
 }
