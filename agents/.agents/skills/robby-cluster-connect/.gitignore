@@ -1,0 +1,10 @@
+# 用户个人集群配置（由交互式 setup 生成）
+reference/context.local.md
+
+# MCP server venv
+mcp-server/.venv/
+mcp-server/*.egg-info/
+mcp-server/__pycache__/
+mcp-server/tests/__pycache__/
+mcp-server/.pytest_cache/
+cluster-agent/__pycache__/
