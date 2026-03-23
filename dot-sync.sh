@@ -9,6 +9,7 @@ DOTFILES_DIR="$HOME/dotfiles"
 AGENTS_REPO="$DOTFILES_DIR/agents/.agents/skills"
 CLAUDE_REPO="$DOTFILES_DIR/claude/.claude/skills"
 AGENTS_LOCAL="$HOME/.agents/skills"
+CLAUDE_LOCAL="$HOME/.claude/skills"
 
 # Colors
 GREEN='\033[0;32m'
@@ -20,44 +21,72 @@ is_gitignored() {
     cd "$DOTFILES_DIR" && git check-ignore -q "agents/.agents/skills/$1" 2>/dev/null
 }
 
+is_submodule() {
+    cd "$DOTFILES_DIR" && git submodule status -- "agents/.agents/skills/$1" &>/dev/null 2>&1
+}
+
 # Remove private config ignores from skill .gitignore (dotfiles repo is private, no need to ignore)
 unignore_private_configs() {
     local gitignore="$1/.gitignore"
     [ -f "$gitignore" ] && sed -i '' '/^CONFIG\.private\.md$/d' "$gitignore"
 }
 
+# Check if a local skill dir is a "real" (unmanaged) skill that dot-sync should handle
+is_unmanaged_skill() {
+    local skill_dir="$1"
+    # Skip if dir itself is a symlink
+    [ -L "${skill_dir%/}" ] && return 1
+    # Skip if it has its own git repo (managed externally)
+    [ -d "$skill_dir/.git" ] && return 1
+    # Must have a real (non-symlink) SKILL.md
+    [ -f "$skill_dir/SKILL.md" ] && [ ! -L "$skill_dir/SKILL.md" ] && return 0
+    return 1
+}
+
+import_skill() {
+    local skill_dir="$1"
+    local skill="$2"
+    local dry_run="$3"
+    echo -e "${GREEN}+ NEW:${NC} $skill"
+    if [ "$dry_run" != "true" ]; then
+        cp -r "$skill_dir" "$AGENTS_REPO/$skill"
+        unignore_private_configs "$AGENTS_REPO/$skill"
+        ln -sf "../../../agents/.agents/skills/$skill" "$CLAUDE_REPO/$skill"
+    fi
+}
+
 sync_skills() {
     local dry_run=$1
     local changes=0
 
-    # 1. Find new local skills (real dirs, not stow symlink files)
+    # 1. Find new local skills from ~/.agents/skills/ (real dirs, not stow-managed)
     for skill_dir in "$AGENTS_LOCAL"/*/; do
         skill=$(basename "$skill_dir")
-        # Skip if skill dir is a symlink or has its own git repo (managed externally)
-        [ -L "${skill_dir%/}" ] && continue
-        [ -d "$skill_dir/.git" ] && continue
-        # Check if the SKILL.md is a real file (not a stow symlink)
-        if [ -f "$skill_dir/SKILL.md" ] && [ ! -L "$skill_dir/SKILL.md" ]; then
-            # Skip gitignored skills (e.g. company-internal)
-            if is_gitignored "$skill"; then
-                continue
-            fi
-            if [ ! -d "$AGENTS_REPO/$skill" ]; then
-                echo -e "${GREEN}+ NEW:${NC} $skill"
-                if [ "$dry_run" != "true" ]; then
-                    cp -r "$skill_dir" "$AGENTS_REPO/$skill"
-                    unignore_private_configs "$AGENTS_REPO/$skill"
-                    ln -sf "../../../agents/.agents/skills/$skill" "$CLAUDE_REPO/$skill"
-                fi
-                changes=$((changes + 1))
-            fi
+        is_unmanaged_skill "$skill_dir" || continue
+        is_gitignored "$skill" && continue
+        if [ ! -d "$AGENTS_REPO/$skill" ]; then
+            import_skill "$skill_dir" "$skill" "$dry_run"
+            changes=$((changes + 1))
+        fi
+    done
+
+    # 1b. Find new local skills from ~/.claude/skills/ (created directly there)
+    for skill_dir in "$CLAUDE_LOCAL"/*/; do
+        skill=$(basename "$skill_dir")
+        is_unmanaged_skill "$skill_dir" || continue
+        is_gitignored "$skill" && continue
+        if [ ! -d "$AGENTS_REPO/$skill" ]; then
+            import_skill "$skill_dir" "$skill" "$dry_run"
+            changes=$((changes + 1))
         fi
     done
 
     # 2. Find removed skills (in repo but not locally)
     for skill_dir in "$AGENTS_REPO"/*/; do
         skill=$(basename "$skill_dir")
-        if [ ! -d "$AGENTS_LOCAL/$skill" ]; then
+        # Skip submodules (managed by git, not dot-sync)
+        is_submodule "$skill" && continue
+        if [ ! -d "$AGENTS_LOCAL/$skill" ] && [ ! -d "$CLAUDE_LOCAL/$skill" ]; then
             echo -e "${RED}- REMOVED:${NC} $skill"
             if [ "$dry_run" != "true" ]; then
                 rm -rf "$AGENTS_REPO/$skill"
@@ -69,12 +98,30 @@ sync_skills() {
 
     # 3. Find modified skills (real local files that differ from repo)
     for skill_dir in "$AGENTS_LOCAL"/*/; do
-        [ -L "${skill_dir%/}" ] && continue
-        [ -d "$skill_dir/.git" ] && continue
         skill=$(basename "$skill_dir")
-        if [ -f "$skill_dir/SKILL.md" ] && [ ! -L "$skill_dir/SKILL.md" ] && [ -d "$AGENTS_REPO/$skill" ]; then
+        is_unmanaged_skill "$skill_dir" || continue
+        is_submodule "$skill" && continue
+        if [ -d "$AGENTS_REPO/$skill" ]; then
             if ! diff -rq "$skill_dir" "$AGENTS_REPO/$skill" &>/dev/null; then
                 echo -e "${YELLOW}~ MODIFIED:${NC} $skill"
+                if [ "$dry_run" != "true" ]; then
+                    rm -rf "$AGENTS_REPO/$skill"
+                    cp -r "$skill_dir" "$AGENTS_REPO/$skill"
+                    unignore_private_configs "$AGENTS_REPO/$skill"
+                fi
+                changes=$((changes + 1))
+            fi
+        fi
+    done
+
+    # 3b. Find modified skills from ~/.claude/skills/
+    for skill_dir in "$CLAUDE_LOCAL"/*/; do
+        skill=$(basename "$skill_dir")
+        is_unmanaged_skill "$skill_dir" || continue
+        is_submodule "$skill" && continue
+        if [ -d "$AGENTS_REPO/$skill" ]; then
+            if ! diff -rq "$skill_dir" "$AGENTS_REPO/$skill" &>/dev/null; then
+                echo -e "${YELLOW}~ MODIFIED:${NC} $skill (from ~/.claude/skills/)"
                 if [ "$dry_run" != "true" ]; then
                     rm -rf "$AGENTS_REPO/$skill"
                     cp -r "$skill_dir" "$AGENTS_REPO/$skill"
@@ -125,18 +172,19 @@ case "${1:-}" in
 
         # Convert real local skill dirs to stow symlinks
         # (remove local copies that already exist in repo so stow can create symlinks)
-        for skill_dir in "$AGENTS_LOCAL"/*/; do
-            [ -L "${skill_dir%/}" ] && continue
-            [ -d "$skill_dir/.git" ] && continue
-            skill=$(basename "$skill_dir")
-            if [ -f "$skill_dir/SKILL.md" ] && [ ! -L "$skill_dir/SKILL.md" ] && [ -d "$AGENTS_REPO/$skill" ]; then
-                if is_gitignored "$skill"; then
-                    continue
+        for search_dir in "$AGENTS_LOCAL" "$CLAUDE_LOCAL"; do
+            for skill_dir in "$search_dir"/*/; do
+                [ -L "${skill_dir%/}" ] && continue
+                [ -d "$skill_dir/.git" ] && continue
+                skill=$(basename "$skill_dir")
+                if [ -f "$skill_dir/SKILL.md" ] && [ ! -L "$skill_dir/SKILL.md" ] && [ -d "$AGENTS_REPO/$skill" ]; then
+                    is_gitignored "$skill" && continue
+                    is_submodule "$skill" && continue
+                    echo -e "${GREEN}→ STOW:${NC} $skill"
+                    rm -rf "$skill_dir"
+                    changes=$((changes + 1))
                 fi
-                echo -e "${GREEN}→ STOW:${NC} $skill"
-                rm -rf "$skill_dir"
-                changes=$((changes + 1))
-            fi
+            done
         done
 
         # Restow to pick up new symlinks
@@ -166,7 +214,8 @@ case "${1:-}" in
         for remote in $PUSH_REMOTES; do
             if git remote get-url "$remote" &>/dev/null; then
                 echo "Pushing to $remote..."
-                if git push "$remote" master 2>/dev/null; then
+                BRANCH="$(git symbolic-ref --short HEAD)"
+                if git push "$remote" "$BRANCH" 2>/dev/null; then
                     echo -e "${GREEN}  ✓ $remote${NC}"
                     pushed=$((pushed + 1))
                 else

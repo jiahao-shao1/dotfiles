@@ -1,0 +1,6 @@
+[submodule "agents/.agents/skills/robby-cluster-connect"]
+	path = agents/.agents/skills/robby-cluster-connect
+	url = git@github.com:jiahao-shao1/robby-cluster-connect.git
+[submodule "agents/.agents/skills/notion-lifeos"]
+	path = agents/.agents/skills/notion-lifeos
+	url = git@github.com:jiahao-shao1/notion-lifeos-skill.git

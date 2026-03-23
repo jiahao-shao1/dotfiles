@@ -200,6 +200,11 @@ fi
 # 5. Ensure ~/.claude directory exists
 mkdir -p "$HOME/.claude"
 
+# 5b. Initialize submodules
+echo "Initializing submodules..."
+cd "$DOTFILES_DIR"
+git submodule update --init --recursive
+
 # 6. Detect machine type and build stow ignore list
 STOW_IGNORE=""
 MACHINE_HOST="$(hostname)"
@@ -210,6 +215,17 @@ case "$MACHINE_HOST" in
     *)                 MACHINE_TYPE="unknown" ;;
 esac
 echo "Machine: $MACHINE_HOST ($MACHINE_TYPE)"
+
+# 6b. Override submodule URLs for work device (use internal-git instead of GitHub)
+if [ "$MACHINE_TYPE" = "work-device" ]; then
+    echo "Work device detected, overriding submodule URLs to internal-git..."
+    git config submodule.agents/.agents/skills/robby-cluster-connect.url \
+        git@internal-git-host:shaojiahao.sjh/robby-cluster-connect.git
+    git config submodule.agents/.agents/skills/notion-lifeos.url \
+        git@internal-git-host:shaojiahao.sjh/notion-lifeos.git
+    git submodule sync
+    git submodule update --init --recursive
+fi
 
 if [ "$MACHINE_TYPE" = "personal" ] && [ -f "$DOTFILES_DIR/.internal-only-skills" ]; then
     echo "Personal machine detected, skipping internal-only skills..."
@@ -247,9 +263,12 @@ git add -A
 if ! git diff --cached --quiet; then
     echo "Pushing newly imported skills to repo..."
     git commit -m "sync: import local skills from $(hostname)"
-    for remote in internal-git origin; do
-        git remote get-url "$remote" &>/dev/null && git push "$remote" master 2>/dev/null && break
-    done
+    BRANCH="$(git symbolic-ref --short HEAD)"
+    case "$(hostname)" in
+        MacBook-Pro*)  PUSH_REMOTE="internal-git" ;;
+        *)             PUSH_REMOTE="origin" ;;
+    esac
+    git remote get-url "$PUSH_REMOTE" &>/dev/null && git push "$PUSH_REMOTE" "$BRANCH" 2>/dev/null
 fi
 
 # 8. Ensure .zshrc sources .zshrc.shared
