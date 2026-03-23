@@ -223,6 +223,10 @@ if [ "$MACHINE_TYPE" = "work-device" ]; then
         git@internal-git-host:shaojiahao.sjh/robby-cluster-connect.git
     git config submodule.agents/.agents/skills/notion-lifeos.url \
         git@internal-git-host:shaojiahao.sjh/notion-lifeos.git
+    git config submodule.agents/.agents/skills/cmux.url \
+        git@internal-git-host:shaojiahao.sjh/cmux-skill.git
+    git config submodule.agents/.agents/skills/daily-summary.url \
+        git@internal-git-host:shaojiahao.sjh/daily-summary.git
     git submodule sync
     git submodule update --init --recursive
 fi
