@@ -10,6 +10,12 @@ font-family = "Maple Mono NF CN"
 font-size = 16
 adjust-cell-height = 2
 
+# CJK fallback: 使用 Maple Mono NF CN 自带中文，阻止 cmux 自动注入 PingFang SC
+font-codepoint-map = U+4E00-U+9FFF=Maple Mono NF CN
+font-codepoint-map = U+3400-U+4DBF=Maple Mono NF CN
+font-codepoint-map = U+3000-U+303F=Maple Mono NF CN
+font-codepoint-map = U+FF00-U+FFEF=Maple Mono NF CN
+
 # --- Theme and Colors ---
 theme = Catppuccin Mocha
 

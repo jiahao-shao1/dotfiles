@@ -32,6 +32,14 @@
     ],
     "SessionStart": []
   },
+  "statusLine": {
+    "type": "command",
+    "command": "PATH=\"$HOME/.nvm/versions/node/$(ls $HOME/.nvm/versions/node/ | sort -V | tail -1)/bin:$PATH\" node ~/.claude/plugins/cache/claude-hud/claude-hud/*/dist/index.js"
+  },
+  "enabledPlugins": {
+    "claude-hud@claude-hud": true,
+    "playwright@claude-plugins-official": true
+  },
   "extraKnownMarketplaces": {
     "claude-hud": {
       "source": {
@@ -40,14 +48,9 @@
       }
     }
   },
-  "effortLevel": "medium",
+  "effortLevel": "high",
   "skipDangerousModePermissionPrompt": true,
-  "enabledPlugins": {
-    "claude-hud@claude-hud": true,
-    "playwright@claude-plugins-official": true
-  },
-  "statusLine": {
-    "type": "command",
-    "command": "PATH=\"$HOME/.nvm/versions/node/$(ls $HOME/.nvm/versions/node/ | sort -V | tail -1)/bin:$PATH\" node ~/.claude/plugins/cache/claude-hud/claude-hud/*/dist/index.js"
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   }
 }

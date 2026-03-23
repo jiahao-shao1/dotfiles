@@ -156,8 +156,14 @@ case "${1:-}" in
         # Commit and push to all configured remotes
         git commit -m "sync: $(date +%Y-%m-%d) skills and config update"
 
+        # Determine push targets by machine type
+        case "$(hostname)" in
+            MacBook-Pro*)  PUSH_REMOTES="internal-git" ;;  # work device → internal-git only
+            *)             PUSH_REMOTES="origin" ;;    # personal Mac / workstation → GitHub
+        esac
+
         pushed=0
-        for remote in internal-git origin; do
+        for remote in $PUSH_REMOTES; do
             if git remote get-url "$remote" &>/dev/null; then
                 echo "Pushing to $remote..."
                 if git push "$remote" master 2>/dev/null; then

@@ -1,1 +1,5 @@
 .DS_Store
+
+# Internal company skills (not for GitHub)
+agents/.agents/skills/yuque/
+claude/.claude/skills/yuque
