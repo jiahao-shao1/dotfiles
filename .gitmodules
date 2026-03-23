@@ -4,3 +4,9 @@
 [submodule "agents/.agents/skills/notion-lifeos"]
 	path = agents/.agents/skills/notion-lifeos
 	url = git@github.com:jiahao-shao1/notion-lifeos-skill.git
+[submodule "agents/.agents/skills/cmux"]
+	path = agents/.agents/skills/cmux
+	url = git@github.com:jiahao-shao1/cmux-skill.git
+[submodule "agents/.agents/skills/daily-summary"]
+	path = agents/.agents/skills/daily-summary
+	url = git@github.com:jiahao-shao1/daily-summary-skill.git
