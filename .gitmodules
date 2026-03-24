@@ -13,3 +13,6 @@
 [submodule "agents/.agents/skills/scholar-inbox"]
 	path = agents/.agents/skills/scholar-inbox
 	url = git@internal-git-host:shaojiahao.sjh/scholar-agent.git
+[submodule "agents/.agents/skills/web-fetcher"]
+	path = agents/.agents/skills/web-fetcher
+	url = git@internal-git-host:shaojiahao.sjh/web-fetcher.git
