@@ -73,6 +73,32 @@ dot-sync           # sync now: detect changes → commit → push
 dot-sync status    # dry run: show what would be synced
 ```
 
+## Skill Submodules
+
+5 skills are managed as git submodules (independent repos):
+
+| Skill | Description | GitHub Repo |
+|-------|-------------|-------------|
+| `cmux` | Terminal orchestration, split panes, browser | [cmux-skill](https://github.com/jiahao-shao1/cmux-skill) |
+| `daily-summary` | Daily work summary aggregation | [daily-summary-skill](https://github.com/jiahao-shao1/daily-summary-skill) |
+| `notion-lifeos` | Notion PARA life management | [notion-lifeos-skill](https://github.com/jiahao-shao1/notion-lifeos-skill) |
+| `robby-cluster-connect` | GPU cluster remote operations | [robby-cluster-connect](https://github.com/jiahao-shao1/robby-cluster-connect) |
+| `scholar-inbox` | Scholar Inbox CLI — daily paper digest | [scholar-inbox-cli](https://github.com/jiahao-shao1/scholar-inbox-cli) |
+
+### Switching submodule URLs (internal-git ↔ GitHub)
+
+On work device, submodules point to internal-git. On personal Mac, they point to GitHub. Switch with one command:
+
+```bash
+# Work device → Personal Mac: switch to GitHub
+./scripts/switch-submodule-urls.sh github
+
+# Personal Mac → Work device: switch to internal-git
+./scripts/switch-submodule-urls.sh internal-git
+```
+
+To add a new mapping when repo names differ between internal-git and GitHub, edit the `internal-git_to_github()` and `github_to_internal-git()` functions in `scripts/switch-submodule-urls.sh`.
+
 ## Adding / Removing Skills
 
 ```bash

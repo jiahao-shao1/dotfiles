@@ -1,12 +1,15 @@
 [submodule "agents/.agents/skills/robby-cluster-connect"]
 	path = agents/.agents/skills/robby-cluster-connect
-	url = git@github.com:jiahao-shao1/robby-cluster-connect.git
+	url = git@internal-git-host:shaojiahao.sjh/robby-cluster-connect.git
 [submodule "agents/.agents/skills/notion-lifeos"]
 	path = agents/.agents/skills/notion-lifeos
-	url = git@github.com:jiahao-shao1/notion-lifeos-skill.git
+	url = git@internal-git-host:shaojiahao.sjh/notion-lifeos-skill.git
 [submodule "agents/.agents/skills/cmux"]
 	path = agents/.agents/skills/cmux
-	url = git@github.com:jiahao-shao1/cmux-skill.git
+	url = git@internal-git-host:shaojiahao.sjh/cmux-skill.git
 [submodule "agents/.agents/skills/daily-summary"]
 	path = agents/.agents/skills/daily-summary
-	url = git@github.com:jiahao-shao1/daily-summary-skill.git
+	url = git@internal-git-host:shaojiahao.sjh/daily-summary-skill.git
+[submodule "agents/.agents/skills/scholar-inbox"]
+	path = agents/.agents/skills/scholar-inbox
+	url = git@internal-git-host:shaojiahao.sjh/scholar-inbox-cli.git
