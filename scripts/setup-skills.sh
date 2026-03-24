@@ -6,14 +6,14 @@
 #
 # Monorepos:
 #   ~/workspace/sjh_skills/skills/*     → personal skills (open-source)
-#   ~/workspace/robby_skills/*          → company skills (internal)
+#   ~/workspace/robby_skills/skills/*   → company skills (internal)
 #
 # Third-party skills in dotfiles are handled by stow, not this script.
 
 set -eo pipefail
 
 SJH_SKILLS_DIR="$HOME/workspace/sjh_skills/skills"
-ROBBY_SKILLS_DIR="$HOME/workspace/robby_skills"
+ROBBY_SKILLS_DIR="$HOME/workspace/robby_skills/skills"
 
 AGENTS_DIR="$HOME/.agents/skills"
 CLAUDE_DIR="$HOME/.claude/skills"
