@@ -72,6 +72,24 @@ dot-sync           # 立即同步：检测变更 → 提交 → 推送
 dot-sync status    # 预览模式：显示待同步的变更
 ```
 
+## Skill 管理
+
+Skill 来自三个来源：
+
+| 来源 | 管理方式 | 示例 |
+|------|---------|------|
+| **第三方 skill** | 本仓库（stow） | brainstorming, frontend-design, find-skills |
+| **个人 skill** | [sjh-skills](https://github.com/jiahao-shao1/sjh-skills) monorepo | scholar-agent, cmux, web-fetcher |
+| **internal skill** | 独立内部仓库 | robby-cluster-connect, robbyctl |
+
+个人和internal skill 存放在独立的 monorepo 中，通过 symlink 链接（不再使用 submodule）。克隆后运行：
+
+```bash
+./scripts/setup-skills.sh
+```
+
+会自动创建 `~/.claude/skills/` 和 `~/.agents/skills/` 到 monorepo 目录的软链接。
+
 ## 添加 / 删除 Skill
 
 ```bash
