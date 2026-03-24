@@ -12,4 +12,4 @@
 	url = git@internal-git-host:shaojiahao.sjh/daily-summary-skill.git
 [submodule "agents/.agents/skills/scholar-inbox"]
 	path = agents/.agents/skills/scholar-inbox
-	url = git@internal-git-host:shaojiahao.sjh/scholar-inbox-cli.git
+	url = git@internal-git-host:shaojiahao.sjh/scholar-agent.git
