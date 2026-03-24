@@ -4,3 +4,4 @@
 agents/.agents/skills/yuque/
 claude/.claude/skills/yuque
 agents/.agents/skills/skill-creator/scripts/__pycache__/
+scripts/sync-to-github.sh
