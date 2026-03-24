@@ -15,8 +15,7 @@ The installer will:
 1. Install GNU Stow (brew on macOS, from source on Linux)
 2. Set up Zsh with Oh My Zsh, plugins, and Starship prompt
 3. Install Ghostty companion tools (macOS: fastfetch, btop, Maple Mono font)
-4. Install [Agent Reach](https://github.com/anthropics/agent-reach) for internet access
-5. Merge any existing local skills into the repo
+4. Merge any existing local skills into the repo
 6. Back up existing configs to `~/.dotfiles-backup-<timestamp>/`
 7. Create symlinks via `stow` for all managed packages
 
@@ -75,7 +74,7 @@ dot-sync status    # dry run: show what would be synced
 
 ## Skill Submodules
 
-5 skills are managed as git submodules (independent repos):
+6 skills are managed as git submodules (independent repos):
 
 | Skill | Description | GitHub Repo |
 |-------|-------------|-------------|
@@ -84,6 +83,7 @@ dot-sync status    # dry run: show what would be synced
 | `notion-lifeos` | Notion PARA life management | [notion-lifeos-skill](https://github.com/jiahao-shao1/notion-lifeos-skill) |
 | `robby-cluster-connect` | GPU cluster remote operations | [robby-cluster-connect](https://github.com/jiahao-shao1/robby-cluster-connect) |
 | `scholar-inbox` | Scholar Inbox CLI — daily paper digest | [scholar-inbox-cli](https://github.com/jiahao-shao1/scholar-inbox-cli) |
+| `web-fetcher` | 5-layer web content extraction | [web-fetcher](https://github.com/jiahao-shao1/web-fetcher) |
 
 ### Switching submodule URLs (internal-git ↔ GitHub)
 

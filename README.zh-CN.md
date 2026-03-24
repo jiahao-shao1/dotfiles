@@ -15,8 +15,7 @@ git clone git@github.com:jiahao-shao1/dotfiles.git ~/dotfiles && cd ~/dotfiles &
 1. 安装 GNU Stow（macOS 用 brew，Linux 从源码编译）
 2. 配置 Zsh：Oh My Zsh、插件、Starship 提示符
 3. 安装 Ghostty 配套工具（macOS：fastfetch、btop、Maple Mono 字体）
-4. 安装 [Agent Reach](https://github.com/anthropics/agent-reach) 提供联网能力
-5. 将本地已有的 skill 合并到仓库
+4. 将本地已有的 skill 合并到仓库
 6. 备份已有配置到 `~/.dotfiles-backup-<timestamp>/`
 7. 通过 `stow` 创建所有软链接
 
