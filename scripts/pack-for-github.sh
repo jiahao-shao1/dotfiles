@@ -11,7 +11,7 @@
 set -eo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-SKILLS_DIR="$HOME/workspace/my_skills"
+SJH_SKILLS_DIR="$HOME/workspace/sjh_skills"
 OUTPUT_DIR="${1:-$HOME}"
 BUNDLE_DIR=$(mktemp -d)
 
@@ -24,23 +24,15 @@ cd "$DOTFILES_DIR"
 git bundle create "$BUNDLE_DIR/dotfiles.bundle" --all 2>/dev/null
 echo "    ✓ $(du -h "$BUNDLE_DIR/dotfiles.bundle" | cut -f1)"
 
-# --- Skills ---
-if [[ ! -d "$SKILLS_DIR" ]]; then
-    echo "Error: $SKILLS_DIR not found" >&2
-    exit 1
+# --- sjh_skills monorepo ---
+if [[ -d "$SJH_SKILLS_DIR/.git" ]]; then
+    echo "  sjh_skills..."
+    cd "$SJH_SKILLS_DIR"
+    git bundle create "$BUNDLE_DIR/sjh_skills.bundle" --all 2>/dev/null
+    echo "    ✓ $(du -h "$BUNDLE_DIR/sjh_skills.bundle" | cut -f1)"
+else
+    echo "  sjh_skills — not found or not a git repo" >&2
 fi
-
-for skill_dir in "$SKILLS_DIR"/*/; do
-    skill_name=$(basename "$skill_dir")
-    if [[ ! -d "$skill_dir/.git" ]]; then
-        echo "  $skill_name — skipping (not a git repo)"
-        continue
-    fi
-    echo "  $skill_name..."
-    cd "$skill_dir"
-    git bundle create "$BUNDLE_DIR/$skill_name.bundle" --all 2>/dev/null
-    echo "    ✓ $(du -h "$BUNDLE_DIR/$skill_name.bundle" | cut -f1)"
-done
 
 # --- Include sync script ---
 SYNC_SCRIPT="$DOTFILES_DIR/scripts/sync-to-github.sh"
