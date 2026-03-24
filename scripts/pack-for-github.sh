@@ -42,10 +42,17 @@ for skill_dir in "$SKILLS_DIR"/*/; do
     echo "    ✓ $(du -h "$BUNDLE_DIR/$skill_name.bundle" | cut -f1)"
 done
 
+# --- Include sync script ---
+SYNC_SCRIPT="$DOTFILES_DIR/scripts/sync-to-github.sh"
+if [[ -f "$SYNC_SCRIPT" ]]; then
+    cp "$SYNC_SCRIPT" "$BUNDLE_DIR/"
+    echo "  sync-to-github.sh included"
+fi
+
 # --- Zip ---
 ZIP_PATH="$OUTPUT_DIR/github-sync.zip"
 cd "$BUNDLE_DIR"
-zip -j "$ZIP_PATH" *.bundle >/dev/null
+zip -j "$ZIP_PATH" * >/dev/null
 rm -rf "$BUNDLE_DIR"
 
 echo
