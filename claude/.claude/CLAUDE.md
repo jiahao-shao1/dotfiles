@@ -14,27 +14,14 @@
 
 ## Feedback
 
-### internal Skill 部署
+### Internal Skill 部署
 
-internal的 skills（如 robbyctl、sync-outputs）必须写到 `~/dotfiles/agents/.agents/skills/` 并在 `~/dotfiles/.gitignore` 中排除，不能推到 GitHub。
+内部 skills 必须写到 `~/dotfiles/agents/.agents/skills/` 并在 `~/dotfiles/.gitignore` 中排除，不能推到 GitHub。
 
 - Skill 源文件放 `~/dotfiles/agents/.agents/skills/<name>/SKILL.md`
 - 在 `~/dotfiles/.gitignore` 添加 `agents/.agents/skills/<name>/` 和 `claude/.claude/skills/<name>`
 - 在 `~/dotfiles/claude/.claude/skills/` 创建符号链接指向 `../../../agents/.agents/skills/<name>`
 - 通过 `stow --no-folding agents && stow --no-folding claude` 部署
-- 不要把internal skill 放在项目 `.agents/` 里
-
-### work device绝对不能 push GitHub
-
-work device（hostname `MacBook-Pro`）和 workstation（vilab12）上**绝对不能**直接 `git push` 到 GitHub（origin）。任何 repo 都必须先 push 到 internal-git，由用户自己在个人 Mac 上手动推到 GitHub。违反此规则会被security policy发现。
-
-- 不要用 `git push origin`
-- 不要用会自动 push origin 的脚本（如旧版 dot-sync）
-- 包括 `git push github` 等任何指向 GitHub 的 remote
-- force push 到 GitHub 也必须通过个人 Mac 执行
-- 包括 workstation，network policy整个network到 github.com 的连接
-- 不要在work device上设 cron 自动推 GitHub
-- 不要在work device上用 `gh` CLI（会连 api.github.com）
 
 ### Worktree Merge 后不自动清理
 
