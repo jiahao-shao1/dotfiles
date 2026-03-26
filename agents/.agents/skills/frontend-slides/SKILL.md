@@ -913,9 +913,64 @@ Every presentation should include:
    - Progress bar updates
    - Navigation dots
 
-2. **Intersection Observer** — For scroll-triggered animations
+2. **Intersection Observer** — For scroll-triggered animations AND nav-dot sync
    - Add `.visible` class when slides enter viewport
    - Trigger CSS animations efficiently
+
+**CRITICAL: Nav-dots MUST use IntersectionObserver, NOT window.scroll.**
+
+With `scroll-snap-type: y mandatory`, browsers often do NOT fire `window.scroll` events reliably during snap transitions (especially after `scrollIntoView`). This causes nav-dots to freeze on the first slide while the user scrolls through the deck.
+
+**Required nav-dots implementation:**
+
+```javascript
+// Track current slide via IntersectionObserver (reliable with scroll-snap)
+let currentSlideIndex = 0;
+
+function syncDots(index) {
+    currentSlideIndex = index;
+    dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+    // Update progress bar
+    const progress = totalSlides > 1 ? (index / (totalSlides - 1)) * 100 : 0;
+    progressBar.style.width = progress + '%';
+}
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+            const idx = Array.from(slides).indexOf(entry.target);
+            if (idx !== -1) syncDots(idx);
+        }
+    });
+}, { threshold: 0.5 });
+
+slides.forEach(slide => observer.observe(slide));
+
+// Keyboard nav reuses currentSlideIndex (no re-calculation needed)
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        if (currentSlideIndex < totalSlides - 1)
+            slides[currentSlideIndex + 1].scrollIntoView({ behavior: 'smooth' });
+    } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+        e.preventDefault();
+        if (currentSlideIndex > 0)
+            slides[currentSlideIndex - 1].scrollIntoView({ behavior: 'smooth' });
+    }
+});
+```
+
+**DO NOT use this broken pattern:**
+```javascript
+// ❌ BROKEN: window.scroll fires unreliably with scroll-snap
+window.addEventListener('scroll', updateProgress);
+function updateProgress() {
+    slides.forEach((slide, i) => {
+        const rect = slide.getBoundingClientRect();
+        if (rect.top <= window.innerHeight / 2) currentSlide = i;
+    });
+}
+```
 
 3. **Optional Enhancements** (based on style):
    - Custom cursor with trail
@@ -1386,6 +1441,10 @@ class TiltEffect {
 **Scroll snap not working:**
 - Ensure `scroll-snap-type` on html/body
 - Each slide needs `scroll-snap-align: start`
+
+**Nav-dots not updating when scrolling (but clicking them works):**
+- This happens when nav-dots use `window.scroll` event — scroll-snap suppresses scroll events during snap transitions
+- Fix: Use `IntersectionObserver` with `threshold: 0.5` instead (see "Required JavaScript Features" section above)
 
 **Mobile issues:**
 - Disable heavy effects at 768px breakpoint

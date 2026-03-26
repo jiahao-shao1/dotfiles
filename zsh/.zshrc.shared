@@ -119,3 +119,10 @@ function ca() {
     echo "Error: venv '${env_name}' not found in ${search_paths[*]}"
     return 1
 }
+
+# Aliyun (通义听悟 + OSS)
+export ALIBABA_CLOUD_ACCESS_KEY_ID="REDACTED_ALIYUN_KEY_ID"
+export ALIBABA_CLOUD_ACCESS_KEY_SECRET="REDACTED_ALIYUN_KEY_SECRET"
+export TINGWU_APP_KEY="REDACTED_TINGWU_KEY"
+export OSS_BUCKET_NAME="jiahao-tingwu-audio"
+export OSS_ENDPOINT="oss-cn-beijing.aliyuncs.com"
