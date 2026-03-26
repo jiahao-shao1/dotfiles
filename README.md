@@ -80,7 +80,7 @@ Skills come from three sources:
 |--------|-----------|---------|
 | **Third-party skills** | This repo (stow) | brainstorming, frontend-design, find-skills |
 | **Personal skills** | [sjh-skills](https://github.com/jiahao-shao1/sjh-skills) monorepo | scholar-agent, cmux, web-fetcher |
-| **Internal skills** | Separate internal repo | robby-cluster-connect, robbyctl |
+| **Private skills** | Separate private repo (.gitignore'd) | — |
 
 Personal and internal skills live in separate monorepos and are linked via symlinks (not submodules). Run the setup script after cloning:
 
@@ -114,7 +114,7 @@ npx skills remove frontend-design
 `claude-notify.sh` provides cross-platform notifications when Claude Code finishes or needs attention:
 
 - **macOS**: Native system notifications via `osascript`
-- **Linux**: Telegram bot messages
+- **Linux**: Configurable (Telegram, etc.)
 
 ## Platform Support
 
@@ -126,4 +126,8 @@ npx skills remove frontend-design
 | Tmux | ✅ | ✅ |
 | Ghostty | ✅ | — |
 | iTerm2 | ✅ | — |
-| Notifications | Native | Telegram |
+| Notifications | Native | Configurable |
+
+## License
+
+[MIT](LICENSE)

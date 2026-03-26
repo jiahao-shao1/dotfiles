@@ -80,7 +80,7 @@ Skill 来自三个来源：
 |------|---------|------|
 | **第三方 skill** | 本仓库（stow） | brainstorming, frontend-design, find-skills |
 | **个人 skill** | [sjh-skills](https://github.com/jiahao-shao1/sjh-skills) monorepo | scholar-agent, cmux, web-fetcher |
-| **内部 skill** | 独立私有仓库 | robby-cluster-connect, robbyctl |
+| **私有 skill** | 独立私有仓库（.gitignore 排除） | — |
 
 个人和内部 skill 存放在独立的 monorepo 中，通过 symlink 链接（不再使用 submodule）。克隆后运行：
 
@@ -114,7 +114,7 @@ npx skills remove frontend-design
 `claude-notify.sh` 在 Claude Code 完成工作或需要关注时发送跨平台通知：
 
 - **macOS**：通过 `osascript` 发送系统原生通知
-- **Linux**：通过 Telegram Bot 发送消息
+- **Linux**：可配置（Telegram 等）
 
 ## 平台支持
 
@@ -126,4 +126,8 @@ npx skills remove frontend-design
 | Tmux | ✅ | ✅ |
 | Ghostty | ✅ | — |
 | iTerm2 | ✅ | — |
-| 通知 | 系统原生 | Telegram |
+| 通知 | 系统原生 | 可配置 |
+
+## 许可证
+
+[MIT](LICENSE)
