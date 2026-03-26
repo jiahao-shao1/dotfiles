@@ -208,40 +208,7 @@ git submodule update --init --recursive
 # 6. Detect machine type and build stow ignore list
 STOW_IGNORE=""
 MACHINE_HOST="$(hostname)"
-case "$MACHINE_HOST" in
-    JadenMacBook-Pro*) MACHINE_TYPE="personal" ;;
-    MacBook-Pro*)      MACHINE_TYPE="work-device" ;;
-    vilab12*)          MACHINE_TYPE="workstation" ;;
-    *)                 MACHINE_TYPE="unknown" ;;
-esac
-echo "Machine: $MACHINE_HOST ($MACHINE_TYPE)"
-
-# 6b. Override submodule URLs for work device (use internal-git instead of GitHub)
-if [ "$MACHINE_TYPE" = "work-device" ]; then
-    echo "Work device detected, overriding submodule URLs to internal-git..."
-    git config submodule.agents/.agents/skills/robby-cluster-connect.url \
-        git@internal-git-host:shaojiahao.sjh/robby-cluster-connect.git
-    git config submodule.agents/.agents/skills/notion-lifeos.url \
-        git@internal-git-host:shaojiahao.sjh/notion-lifeos.git
-    git config submodule.agents/.agents/skills/cmux.url \
-        git@internal-git-host:shaojiahao.sjh/cmux-skill.git
-    git config submodule.agents/.agents/skills/daily-summary.url \
-        git@internal-git-host:shaojiahao.sjh/daily-summary.git
-    git submodule sync
-    git submodule update --init --recursive
-fi
-
-if [ "$MACHINE_TYPE" = "personal" ] && [ -f "$DOTFILES_DIR/.internal-only-skills" ]; then
-    echo "Personal machine detected, skipping internal-only skills..."
-    while IFS= read -r skill; do
-        [ -z "$skill" ] && continue
-        STOW_IGNORE="$STOW_IGNORE --ignore=$skill"
-        # Remove existing symlinks for company skills
-        rm -rf "$HOME/.agents/skills/$skill"
-        rm -f "$HOME/.claude/skills/$skill"
-        echo "  - $skill"
-    done < "$DOTFILES_DIR/.internal-only-skills"
-fi
+echo "Machine: $MACHINE_HOST"
 
 # 7. Stow packages
 cd "$DOTFILES_DIR"

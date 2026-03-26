@@ -82,7 +82,7 @@ stow -D <包名>
 
 - Skill 源文件在 `agents/.agents/skills/<name>/SKILL.md`
 - `claude/.claude/skills/` 下创建 symlink 指向 `../../../agents/.agents/skills/<name>`
-- internal skill 需在 `.gitignore` 中排除
+- Internal-only skills should be excluded via `.gitignore`
 
 ### 同步
 
@@ -175,7 +175,7 @@ The next session only needs to read `HANDOFF.md` to continue. Delete the file wh
 
 ### Never Do
 
-- 把internal skill 推到 GitHub（必须在 `.gitignore` 中排除）
+- Push internal-only skills to GitHub (must be excluded in `.gitignore`)
 - 直接编辑 symlink 目标外的文件（编辑 `~/dotfiles/` 下的源文件即可）
 - 在配置文件中硬编码机器特定的路径
 

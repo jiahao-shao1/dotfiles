@@ -204,11 +204,7 @@ case "${1:-}" in
         # Commit and push to all configured remotes
         git commit -m "sync: $(date +%Y-%m-%d) skills and config update"
 
-        # Determine push targets by machine type
-        case "$(hostname)" in
-            MacBook-Pro*)  PUSH_REMOTES="internal-git" ;;  # work device → internal-git only
-            *)             PUSH_REMOTES="origin" ;;    # personal Mac / workstation → GitHub
-        esac
+        PUSH_REMOTES="origin"
 
         pushed=0
         for remote in $PUSH_REMOTES; do
