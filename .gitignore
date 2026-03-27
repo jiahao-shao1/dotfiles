@@ -5,3 +5,4 @@
 agents/.agents/skills/yuque/
 claude/.claude/skills/yuque
 scripts/sync-to-github.sh
+scripts/bootstrap-company.sh

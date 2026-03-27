@@ -8,7 +8,7 @@
 #   ~/workspace/sjh_skills/skills/*     → personal skills (open-source)
 #   ~/workspace/robby_skills/skills/*   → company skills (internal)
 #
-# Third-party skills in dotfiles are handled by stow, not this script.
+# Third-party skills are installed via: bash scripts/install-skills.sh
 
 set -eo pipefail
 
@@ -70,4 +70,4 @@ else
 fi
 
 echo
-echo "Done. Third-party skills managed by: cd ~/dotfiles && stow --no-folding agents && stow --no-folding claude"
+echo "Done. Third-party skills: bash ~/dotfiles/scripts/install-skills.sh"
