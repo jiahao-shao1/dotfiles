@@ -95,6 +95,7 @@ alias xreach="xreach --proxy http://127.0.0.1:7890"
 # cmux + Claude Code
 alias cc='proxy && claude --dangerously-skip-permissions'
 alias cct='proxy && cmux claude-teams --dangerously-skip-permissions'
+alias cx='proxy && codex --dangerously-bypass-approvals-and-sandbox'
 
 # Dotfiles
 alias dot-sync="~/dotfiles/dot-sync.sh"

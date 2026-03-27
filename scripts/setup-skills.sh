@@ -6,14 +6,14 @@
 #
 # Monorepos:
 #   ~/workspace/sjh_skills/skills/*     → personal skills (open-source)
-#   ~/workspace/robby_skills/skills/*   → company skills (internal)
+#   ~/workspace/robby-skills/skills/*   → company skills (internal)
 #
 # Third-party skills are installed via: bash scripts/install-skills.sh
 
 set -eo pipefail
 
 SJH_SKILLS_DIR="$HOME/workspace/sjh_skills/skills"
-ROBBY_SKILLS_DIR="$HOME/workspace/robby_skills/skills"
+ROBBY_SKILLS_DIR="$HOME/workspace/robby-skills/skills"
 
 AGENTS_DIR="$HOME/.agents/skills"
 CLAUDE_DIR="$HOME/.claude/skills"
@@ -56,9 +56,9 @@ else
     echo "  ⚠ $SJH_SKILLS_DIR not found (clone sjh-skills first)"
 fi
 
-# --- Company skills (robby_skills) ---
+# --- Company skills (robby-skills) ---
 echo
-echo "=== Company Skills (robby_skills) ==="
+echo "=== Company Skills (robby-skills) ==="
 if [[ -d "$ROBBY_SKILLS_DIR" ]]; then
     for skill_dir in "$ROBBY_SKILLS_DIR"/*/; do
         [[ ! -d "$skill_dir" ]] && continue

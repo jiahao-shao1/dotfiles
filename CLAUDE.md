@@ -45,7 +45,7 @@ Skills 来自三个来源，dotfiles 本身不存储 skill 内容：
 |------|------|---------|------|
 | 第三方 | GitHub repos | `npx skills add -y -g`（`install-skills.sh`） | brainstorming, frontend-design, notebooklm, playwright-cli |
 | 个人 | `~/workspace/sjh_skills/skills/` | symlink（`setup-skills.sh`） | scholar-agent, cmux, web-fetcher, init-project, project-review |
-| 公司 | `~/workspace/robby_skills/skills/` | symlink（`setup-skills.sh`） | robby-cluster-connect, robbyctl, yuque |
+| 公司 | `~/workspace/robby-skills/skills/` | symlink（`setup-skills.sh`） | robby-cluster-connect, robbyctl, yuque |
 
 公司 skills 仅在公司机器部署，相关脚本（`bootstrap-company.sh`）已 gitignore。
 
@@ -173,7 +173,7 @@ The next session only needs to read `HANDOFF.md` to continue. Delete the file wh
 
 ### Always Do
 
-- 修改 skill → 在对应 monorepo 中编辑（sjh_skills 或 robby_skills），不要编辑 symlink
+- 修改 skill → 在对应 monorepo 中编辑（sjh_skills 或 robby-skills），不要编辑 symlink
 - 使用 `stow --no-folding` 而非 `stow`（保持文件级 symlink）
 - 修改配置后验证 symlink 是否正确指向
 
