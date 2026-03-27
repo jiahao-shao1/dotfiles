@@ -1,12 +1,7 @@
 .DS_Store
 *.env
 
-# Sensitive data
-agents/.agents/skills/notebooklm/data/
-agents/.agents/skills/notebooklm/.venv/
-
 # Internal company skills (not for GitHub)
 agents/.agents/skills/yuque/
 claude/.claude/skills/yuque
-agents/.agents/skills/skill-creator/scripts/__pycache__/
 scripts/sync-to-github.sh
