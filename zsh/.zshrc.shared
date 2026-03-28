@@ -99,6 +99,7 @@ alias dot-sync="~/dotfiles/dot-sync.sh"
 alias dot-status="~/dotfiles/dot-sync.sh status"
 alias dot-pull="cd ~/dotfiles && git pull --ff-only && cd -"
 alias dot-install="cd ~/dotfiles && git pull --ff-only && ./install.sh && cd -"
+alias keys="cat ~/.terminal-keys.txt"
 
 # ============================================================================
 # Functions

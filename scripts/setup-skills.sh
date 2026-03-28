@@ -47,6 +47,8 @@ if [[ -d "$SJH_SKILLS_DIR" ]]; then
     for skill_dir in "$SJH_SKILLS_DIR"/*/; do
         [[ ! -d "$skill_dir" ]] && continue
         skill_name=$(basename "$skill_dir")
+        # remote-cluster-agent is open-source only; we use robby-cluster-connect internally
+        [[ "$skill_name" == "remote-cluster-agent" ]] && continue
         # scholar-agent maps to scholar-inbox link name (skill trigger name)
         link_name="$skill_name"
         [[ "$skill_name" == "scholar-agent" ]] && link_name="scholar-inbox"
