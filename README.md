@@ -15,9 +15,8 @@ git clone git@github.com:jiahao-shao1/dotfiles.git ~/dotfiles && cd ~/dotfiles &
 1. Install GNU Stow (brew on macOS, from source on Linux)
 2. Set up Zsh with Oh My Zsh, plugins, and Starship prompt
 3. Install Ghostty companion tools (macOS: fastfetch, btop, Maple Mono font, cmux)
-4. Merge any existing local skills into the repo
-5. Back up existing configs to `~/.dotfiles-backup-<timestamp>/`
-6. Create symlinks via `stow` for all managed packages
+4. Back up existing configs to `~/.dotfiles-backup-<timestamp>/`
+5. Create symlinks via `stow` for all managed packages
 
 `bootstrap.sh` sets up skills:
 
@@ -30,15 +29,15 @@ git clone git@github.com:jiahao-shao1/dotfiles.git ~/dotfiles && cd ~/dotfiles &
 
 ```
 dotfiles/
-├── agents/          # ~/.agents — Claude Code agent skills (21+)
-├── claude/          # ~/.claude — settings.json, CLAUDE.md, skills symlinks
+├── claude/          # ~/.claude — settings.json, CLAUDE.md, skills, rules
 ├── zsh/             # ~/.zshrc.shared — shared shell config
 ├── tmux/            # ~/.tmux.conf
 ├── starship/        # ~/.config/starship.toml
 ├── ghostty/         # ~/.config/ghostty/config (macOS)
 ├── iterm2/          # iTerm2 preferences (macOS)
-├── install.sh       # One-time setup
-├── dot-sync.sh      # Skill & config sync script
+├── scripts/         # bootstrap.sh, setup-skills.sh, install-skills.sh
+├── install.sh       # One-time setup (dependencies + stow)
+├── dot-sync.sh      # Config sync script
 └── claude-notify.sh # Cross-platform notifications
 ```
 
@@ -46,9 +45,9 @@ dotfiles/
 
 Each top-level directory mirrors a path under `$HOME`. Stow creates **file-level symlinks** (`--no-folding`) so that:
 
-- `~/dotfiles/agents/.agents/skills/xxx/` → `~/.agents/skills/xxx/`
 - `~/dotfiles/claude/.claude/settings.json` → `~/.claude/settings.json`
-- Skills in `~/.claude/skills/` are repo-internal symlinks pointing to `agents/.agents/skills/`
+- `~/dotfiles/claude/.claude/CLAUDE.md` → `~/.claude/CLAUDE.md`
+- `~/dotfiles/zsh/.zshrc.shared` → `~/.zshrc.shared`
 
 This means **editing `~/.claude/settings.json` edits the repo file directly** — no manual copy needed.
 
@@ -56,10 +55,10 @@ This means **editing `~/.claude/settings.json` edits the repo file directly** �
 
 | Synced | Not Synced |
 |--------|------------|
-| `~/.agents/skills/` | `~/.claude/history.jsonl` |
-| `~/.claude/settings.json` | `~/.claude/.credentials.json` |
-| `~/.claude/CLAUDE.md` | `~/.claude/projects/` |
-| `~/.claude/skills/` | Other runtime files |
+| `~/.claude/settings.json` | `~/.claude/history.jsonl` |
+| `~/.claude/CLAUDE.md` | `~/.claude/.credentials.json` |
+| `~/.claude/skills/` | `~/.claude/projects/` |
+| `~/.claude/rules/` | Other runtime files |
 | `~/.zshrc.shared` | `~/.zshrc` (machine-specific) |
 | `~/.tmux.conf` | |
 | `~/.config/starship.toml` | |
@@ -83,13 +82,13 @@ dot-sync status    # dry run: show what would be synced
 
 Skills come from three sources:
 
-| Source | Managed by | Example |
-|--------|-----------|---------|
-| **Third-party skills** | This repo (stow) | brainstorming, frontend-design, find-skills |
-| **Personal skills** | [sjh-skills](https://github.com/jiahao-shao1/sjh-skills) monorepo | scholar-agent, cmux, web-fetcher |
-| **Private skills** | Separate private repo (.gitignore'd) | — |
+| Source | Managed by | Skills |
+|--------|-----------|--------|
+| **Third-party** | `npx skills add` ([install-skills.sh](scripts/install-skills.sh)) | brainstorming, writing-plans, executing-plans, dispatching-parallel-agents, subagent-driven-development, using-git-worktrees, frontend-design, skill-creator, find-skills, frontend-slides, baoyu-infographic, baoyu-xhs-images, playwright-cli, notebooklm |
+| **Personal** | [sjh-skills](https://github.com/jiahao-shao1/sjh-skills) monorepo (symlink) | scholar-agent, cmux, codex-review, daily-summary, init-project, notion-lifeos, project-review, web-fetcher |
+| **Private** | Separate private repo (symlink, .gitignore'd) | — |
 
-Personal and internal skills live in separate monorepos and are linked via symlinks (not submodules). Run the setup script after cloning:
+Personal and private skills live in separate monorepos and are linked via symlinks (not submodules). Run the setup script after cloning:
 
 ```bash
 ./scripts/setup-skills.sh

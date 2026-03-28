@@ -2,8 +2,6 @@
 set -e
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-AGENTS_REPO="$DOTFILES_DIR/agents/.agents/skills"
-CLAUDE_REPO="$DOTFILES_DIR/claude/.claude/skills"
 
 echo "=== Claude Code Dotfiles Installer ==="
 
@@ -82,7 +80,7 @@ if [[ "$(uname)" == "Darwin" ]] && [ -d "$DOTFILES_DIR/iterm2" ]; then
     echo "iTerm2 will load preferences from $DOTFILES_DIR/iterm2"
 fi
 
-# 2d. Install Ghostty companion tools (macOS only: Fastfetch, Btop, Maple Mono font)
+# 2d. Install Ghostty companion tools (macOS only: Fastfetch, Btop, Maple Mono font, cmux)
 if [[ "$(uname)" == "Darwin" ]]; then
     echo "Installing Ghostty companion tools..."
     for tool in fastfetch btop; do
@@ -109,110 +107,78 @@ if [[ "$(uname)" == "Darwin" ]]; then
     fi
 fi
 
-# 3. Merge local skills into repo (keep skills that only exist locally)
-if [ -d "$HOME/.agents/skills" ]; then
-    echo "Merging local skills into dotfiles repo..."
-    for skill_dir in "$HOME/.agents/skills"/*/; do
-        [ -d "$skill_dir" ] || continue
-        skill=$(basename "$skill_dir")
-        # Skip if skill dir is a symlink OR has its own git repo (managed externally)
-        [ -L "${skill_dir%/}" ] && continue
-        [ -d "$skill_dir/.git" ] && continue
-        # Skip gitignored skills
-        is_gitignored "$skill" 2>/dev/null && continue
-        # Skip stow-managed skills (SKILL.md is a symlink)
-        [ -f "$skill_dir/SKILL.md" ] && [ ! -L "$skill_dir/SKILL.md" ] || continue
-        if [ ! -d "$AGENTS_REPO/$skill" ]; then
-            echo "  + Importing local skill: $skill"
-            cp -r "$skill_dir" "$AGENTS_REPO/$skill"
-            ln -sf "../../../agents/.agents/skills/$skill" "$CLAUDE_REPO/$skill"
-        fi
-    done
-fi
-
-# 4. Backup and remove managed files
+# 3. Backup and remove managed files
 BACKUP_DIR="$HOME/.dotfiles-backup-$(date +%Y%m%d%H%M%S)"
 
-# 4a. Backup tmux.conf if it's a real file
+# 3a. Backup tmux.conf if it's a real file
 if [ -e "$HOME/.tmux.conf" ] && [ ! -L "$HOME/.tmux.conf" ]; then
     mkdir -p "$BACKUP_DIR"
     mv "$HOME/.tmux.conf" "$BACKUP_DIR/.tmux.conf"
 fi
 
-# 4a2. Backup ghostty config if it's a real file (macOS only)
+# 3b. Backup ghostty config if it's a real file (macOS only)
 if [[ "$(uname)" == "Darwin" ]] && [ -e "$HOME/.config/ghostty/config" ] && [ ! -L "$HOME/.config/ghostty/config" ]; then
     mkdir -p "$BACKUP_DIR"
     mv "$HOME/.config/ghostty/config" "$BACKUP_DIR/ghostty-config"
 fi
 
-# 4a3. Backup starship config if it's a real file
+# 3c. Backup starship config if it's a real file
 if [ -e "$HOME/.config/starship.toml" ] && [ ! -L "$HOME/.config/starship.toml" ]; then
     mkdir -p "$BACKUP_DIR"
     mv "$HOME/.config/starship.toml" "$BACKUP_DIR/starship.toml"
 fi
 
-# 4b. Backup other managed files
+# 3d. Backup claude managed files
 NEED_BACKUP=false
 
-if [ -e "$HOME/.agents" ] && [ ! -L "$HOME/.agents" ]; then
-    NEED_BACKUP=true
-fi
 if [ -e "$HOME/.claude/settings.json" ] && [ ! -L "$HOME/.claude/settings.json" ]; then
     NEED_BACKUP=true
 fi
 if [ -e "$HOME/.claude/CLAUDE.md" ] && [ ! -L "$HOME/.claude/CLAUDE.md" ]; then
     NEED_BACKUP=true
 fi
-if [ -e "$HOME/.claude/skills" ] && [ ! -L "$HOME/.claude/skills" ]; then
-    NEED_BACKUP=true
-fi
 
 if [ "$NEED_BACKUP" = true ]; then
     echo "Backing up existing configs to $BACKUP_DIR ..."
     mkdir -p "$BACKUP_DIR"
-    # Backup .agents skills (skip symlinks and git repos — they're managed externally)
-    if [ -e "$HOME/.agents" ] && [ ! -L "$HOME/.agents" ]; then
-        mkdir -p "$BACKUP_DIR/.agents/skills"
-        for skill_dir in "$HOME/.agents/skills"/*/; do
-            [ -d "$skill_dir" ] || continue
-            [ -L "${skill_dir%/}" ] && continue
-            [ -d "$skill_dir/.git" ] && continue
-            mv "$skill_dir" "$BACKUP_DIR/.agents/skills/"
-        done
-    fi
     [ -e "$HOME/.claude/settings.json" ] && [ ! -L "$HOME/.claude/settings.json" ] && mv "$HOME/.claude/settings.json" "$BACKUP_DIR/settings.json"
     [ -e "$HOME/.claude/CLAUDE.md" ] && [ ! -L "$HOME/.claude/CLAUDE.md" ] && mv "$HOME/.claude/CLAUDE.md" "$BACKUP_DIR/CLAUDE.md"
-    # Backup .claude/skills (skip symlinks and git repos)
-    if [ -e "$HOME/.claude/skills" ] && [ ! -L "$HOME/.claude/skills" ]; then
-        mkdir -p "$BACKUP_DIR/skills"
-        for skill in "$HOME/.claude/skills"/*/; do
-            [ -d "$skill" ] || continue
-            [ -L "${skill%/}" ] && continue
-            [ -d "$skill/.git" ] && continue
-            mv "$skill" "$BACKUP_DIR/skills/"
-        done
-    fi
 else
     echo "No existing configs to backup (or already symlinked)."
 fi
 
-# 5. Ensure ~/.claude directory exists
+# 3e. Backup .claude/skills non-symlink entries (prevent stow conflicts)
+if [ -d "$HOME/.claude/skills" ] && [ ! -L "$HOME/.claude/skills" ]; then
+    for skill in "$HOME/.claude/skills"/*/; do
+        [ -d "$skill" ] || continue
+        [ -L "${skill%/}" ] && continue
+        [ -d "$skill/.git" ] && continue
+        mkdir -p "$BACKUP_DIR/skills"
+        mv "$skill" "$BACKUP_DIR/skills/"
+    done
+fi
+
+# 3f. Unstow legacy agents package (cleanup from prior installs)
+if [ -d "$DOTFILES_DIR/agents" ]; then
+    cd "$DOTFILES_DIR"
+    stow -D --no-folding agents 2>/dev/null || true
+fi
+
+# 4. Ensure ~/.claude directory exists
 mkdir -p "$HOME/.claude"
 
-# 5b. Initialize submodules
+# 4b. Initialize submodules
 echo "Initializing submodules..."
 cd "$DOTFILES_DIR"
 git submodule update --init --recursive
 
-# 6. Detect machine type and build stow ignore list
+# 5. Detect machine type and build stow ignore list
 STOW_IGNORE=""
 MACHINE_HOST="$(hostname)"
 echo "Machine: $MACHINE_HOST"
 
-# 7. Stow packages
+# 6. Stow packages
 cd "$DOTFILES_DIR"
-echo "Stowing agents..."
-stow -R --no-folding $STOW_IGNORE agents
 echo "Stowing claude..."
 stow -R --no-folding $STOW_IGNORE claude
 echo "Stowing zsh..."
@@ -227,21 +193,7 @@ if [[ "$(uname)" == "Darwin" ]]; then
     stow -R --no-folding ghostty
 fi
 
-# 7. Commit and push newly imported skills
-cd "$DOTFILES_DIR"
-git add -A
-if ! git diff --cached --quiet; then
-    echo "Pushing newly imported skills to repo..."
-    git commit -m "sync: import local skills from $(hostname)"
-    BRANCH="$(git symbolic-ref --short HEAD)"
-    case "$(hostname)" in
-        MacBook-Pro*)  PUSH_REMOTE="internal-git" ;;
-        *)             PUSH_REMOTE="origin" ;;
-    esac
-    git remote get-url "$PUSH_REMOTE" &>/dev/null && git push "$PUSH_REMOTE" "$BRANCH" 2>/dev/null
-fi
-
-# 8. Ensure .zshrc sources .zshrc.shared
+# 7. Ensure .zshrc sources .zshrc.shared
 if [ -f "$HOME/.zshrc" ]; then
     if ! grep -q 'source.*\.zshrc\.shared' "$HOME/.zshrc"; then
         echo "Adding 'source ~/.zshrc.shared' to ~/.zshrc ..."
@@ -257,7 +209,6 @@ fi
 
 echo ""
 echo "=== Done! ==="
-echo "Verify: ls -la ~/.agents/skills/"
 echo "Verify: cat ~/.claude/settings.json | head -3"
 echo "Verify: readlink ~/.zshrc.shared"
 echo "Verify: readlink ~/.tmux.conf"

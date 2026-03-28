@@ -15,9 +15,8 @@ git clone git@github.com:jiahao-shao1/dotfiles.git ~/dotfiles && cd ~/dotfiles &
 1. 安装 GNU Stow（macOS 用 brew，Linux 从源码编译）
 2. 配置 Zsh：Oh My Zsh、插件、Starship 提示符
 3. 安装 Ghostty 配套工具（macOS：fastfetch、btop、Maple Mono 字体、cmux）
-4. 将本地已有的 skill 合并到仓库
-5. 备份已有配置到 `~/.dotfiles-backup-<timestamp>/`
-6. 通过 `stow` 创建所有软链接
+4. 备份已有配置到 `~/.dotfiles-backup-<timestamp>/`
+5. 通过 `stow` 创建所有软链接
 
 `bootstrap.sh` 配置 skills：
 
@@ -30,15 +29,15 @@ git clone git@github.com:jiahao-shao1/dotfiles.git ~/dotfiles && cd ~/dotfiles &
 
 ```
 dotfiles/
-├── agents/          # ~/.agents — Claude Code agent skills（21+）
-├── claude/          # ~/.claude — settings.json、CLAUDE.md、skills 软链接
+├── claude/          # ~/.claude — settings.json、CLAUDE.md、skills、rules
 ├── zsh/             # ~/.zshrc.shared — 共享 shell 配置
 ├── tmux/            # ~/.tmux.conf
 ├── starship/        # ~/.config/starship.toml
 ├── ghostty/         # ~/.config/ghostty/config（macOS）
 ├── iterm2/          # iTerm2 偏好设置（macOS）
-├── install.sh       # 一次性安装脚本
-├── dot-sync.sh      # Skill 和配置同步脚本
+├── scripts/         # bootstrap.sh、setup-skills.sh、install-skills.sh
+├── install.sh       # 一次性安装脚本（依赖 + stow）
+├── dot-sync.sh      # 配置同步脚本
 └── claude-notify.sh # 跨平台通知工具
 ```
 
@@ -46,9 +45,9 @@ dotfiles/
 
 每个顶层目录映射到 `$HOME` 下的对应路径。Stow 使用 `--no-folding` 创建**文件级别的软链接**：
 
-- `~/dotfiles/agents/.agents/skills/xxx/` → `~/.agents/skills/xxx/`
 - `~/dotfiles/claude/.claude/settings.json` → `~/.claude/settings.json`
-- `~/.claude/skills/` 下的 skill 是仓库内部的软链接，指向 `agents/.agents/skills/`
+- `~/dotfiles/claude/.claude/CLAUDE.md` → `~/.claude/CLAUDE.md`
+- `~/dotfiles/zsh/.zshrc.shared` → `~/.zshrc.shared`
 
 因此**直接编辑 `~/.claude/settings.json` 就是在编辑仓库中的文件**，无需手动拷贝。
 
@@ -56,10 +55,10 @@ dotfiles/
 
 | 同步 | 不同步 |
 |------|--------|
-| `~/.agents/skills/` | `~/.claude/history.jsonl` |
-| `~/.claude/settings.json` | `~/.claude/.credentials.json` |
-| `~/.claude/CLAUDE.md` | `~/.claude/projects/` |
-| `~/.claude/skills/` | 其他运行时文件 |
+| `~/.claude/settings.json` | `~/.claude/history.jsonl` |
+| `~/.claude/CLAUDE.md` | `~/.claude/.credentials.json` |
+| `~/.claude/skills/` | `~/.claude/projects/` |
+| `~/.claude/rules/` | 其他运行时文件 |
 | `~/.zshrc.shared` | `~/.zshrc`（机器特定） |
 | `~/.tmux.conf` | |
 | `~/.config/starship.toml` | |
@@ -83,13 +82,13 @@ dot-sync status    # 预览模式：显示待同步的变更
 
 Skill 来自三个来源：
 
-| 来源 | 管理方式 | 示例 |
-|------|---------|------|
-| **第三方 skill** | 本仓库（stow） | brainstorming, frontend-design, find-skills |
-| **个人 skill** | [sjh-skills](https://github.com/jiahao-shao1/sjh-skills) monorepo | scholar-agent, cmux, web-fetcher |
-| **私有 skill** | 独立私有仓库（.gitignore 排除） | — |
+| 来源 | 管理方式 | Skills |
+|------|---------|--------|
+| **第三方** | `npx skills add`（[install-skills.sh](scripts/install-skills.sh)） | brainstorming, writing-plans, executing-plans, dispatching-parallel-agents, subagent-driven-development, using-git-worktrees, frontend-design, skill-creator, find-skills, frontend-slides, baoyu-infographic, baoyu-xhs-images, playwright-cli, notebooklm |
+| **个人** | [sjh-skills](https://github.com/jiahao-shao1/sjh-skills) monorepo（symlink） | scholar-agent, cmux, codex-review, daily-summary, init-project, notion-lifeos, project-review, web-fetcher |
+| **私有** | 独立私有仓库（symlink，.gitignore 排除） | — |
 
-个人和内部 skill 存放在独立的 monorepo 中，通过 symlink 链接（不再使用 submodule）。克隆后运行：
+个人和私有 skill 存放在独立的 monorepo 中，通过 symlink 链接（不再使用 submodule）。克隆后运行：
 
 ```bash
 ./scripts/setup-skills.sh
