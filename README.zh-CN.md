@@ -7,17 +7,24 @@
 ## 快速开始
 
 ```bash
-git clone git@github.com:jiahao-shao1/dotfiles.git ~/dotfiles && cd ~/dotfiles && ./install.sh
+git clone git@github.com:jiahao-shao1/dotfiles.git ~/dotfiles && cd ~/dotfiles && ./install.sh && bash scripts/bootstrap.sh
 ```
 
-安装脚本会自动完成：
+`install.sh` 安装基础依赖：
 
 1. 安装 GNU Stow（macOS 用 brew，Linux 从源码编译）
 2. 配置 Zsh：Oh My Zsh、插件、Starship 提示符
-3. 安装 Ghostty 配套工具（macOS：fastfetch、btop、Maple Mono 字体）
+3. 安装 Ghostty 配套工具（macOS：fastfetch、btop、Maple Mono 字体、cmux）
 4. 将本地已有的 skill 合并到仓库
-6. 备份已有配置到 `~/.dotfiles-backup-<timestamp>/`
-7. 通过 `stow` 创建所有软链接
+5. 备份已有配置到 `~/.dotfiles-backup-<timestamp>/`
+6. 通过 `stow` 创建所有软链接
+
+`bootstrap.sh` 配置 skills：
+
+1. Stow 所有 dotfile 包
+2. 克隆 [sjh-skills](https://github.com/jiahao-shao1/sjh-skills) monorepo
+3. 为个人/公司 skills 创建软链接
+4. 通过 `npx skills add` 安装所有第三方 skills
 
 ## 仓库结构
 

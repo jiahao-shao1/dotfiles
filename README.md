@@ -7,17 +7,24 @@ English | [中文](README.zh-CN.md)
 ## Quick Start
 
 ```bash
-git clone git@github.com:jiahao-shao1/dotfiles.git ~/dotfiles && cd ~/dotfiles && ./install.sh
+git clone git@github.com:jiahao-shao1/dotfiles.git ~/dotfiles && cd ~/dotfiles && ./install.sh && bash scripts/bootstrap.sh
 ```
 
-The installer will:
+`install.sh` sets up base dependencies:
 
 1. Install GNU Stow (brew on macOS, from source on Linux)
 2. Set up Zsh with Oh My Zsh, plugins, and Starship prompt
-3. Install Ghostty companion tools (macOS: fastfetch, btop, Maple Mono font)
+3. Install Ghostty companion tools (macOS: fastfetch, btop, Maple Mono font, cmux)
 4. Merge any existing local skills into the repo
-6. Back up existing configs to `~/.dotfiles-backup-<timestamp>/`
-7. Create symlinks via `stow` for all managed packages
+5. Back up existing configs to `~/.dotfiles-backup-<timestamp>/`
+6. Create symlinks via `stow` for all managed packages
+
+`bootstrap.sh` sets up skills:
+
+1. Stow all dotfile packages
+2. Clone [sjh-skills](https://github.com/jiahao-shao1/sjh-skills) monorepo
+3. Create symlinks for personal/company skills
+4. Install all third-party skills via `npx skills add`
 
 ## What's Inside
 

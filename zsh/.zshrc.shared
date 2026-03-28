@@ -89,9 +89,6 @@ alias pyl="pyenv local"
 # Proxy
 alias proxy="export http_proxy=http://127.0.0.1:7890 && export https_proxy=http://127.0.0.1:7890"
 alias unproxy="unset http_proxy && unset https_proxy"
-# X / Agent Reach
-alias xreach="xreach --proxy http://127.0.0.1:7890"
-
 # cmux + Claude Code
 alias cc='proxy && claude --dangerously-skip-permissions'
 alias cct='proxy && cmux claude-teams --dangerously-skip-permissions'

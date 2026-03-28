@@ -99,15 +99,14 @@ if [[ "$(uname)" == "Darwin" ]]; then
     else
         echo "  Maple Mono NF CN font already installed."
     fi
-fi
-
-# 2e. Install Agent Reach (internet access for AI agents)
-if ! command -v agent-reach &>/dev/null; then
-    echo "Installing Agent Reach..."
-    PIP_CONFIG_FILE=/dev/null pip install https://github.com/Panniantong/agent-reach/archive/main.zip
-    agent-reach install --env=auto --safe
-else
-    echo "Agent Reach already installed."
+    # cmux: Ghostty-based terminal with vertical tabs and notifications for AI agents
+    if ! command -v cmux &>/dev/null; then
+        echo "  Installing cmux..."
+        brew tap manaflow-ai/cmux
+        brew install --cask cmux
+    else
+        echo "  cmux already installed."
+    fi
 fi
 
 # 3. Merge local skills into repo (keep skills that only exist locally)

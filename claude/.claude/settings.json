@@ -33,7 +33,19 @@
         ]
       }
     ],
-    "SessionStart": []
+    "SessionStart": [],
+    "PostToolUse": [
+      {
+        "matcher": "ExitPlanMode",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"systemMessage\": \"Plan finalized. Consider running /codex-review for cross-model verification.\"}'",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
   },
   "statusLine": {
     "type": "command",

@@ -11,7 +11,9 @@ SCRIPTS_DIR="$DOTFILES_DIR/scripts"
 
 echo "=== [1/4] Stow dotfiles ==="
 cd "$DOTFILES_DIR"
-for pkg in zsh tmux ghostty claude agents; do
+pkgs=(zsh tmux claude agents)
+[[ "$(uname)" == "Darwin" ]] && pkgs+=(ghostty)
+for pkg in "${pkgs[@]}"; do
   if [[ -d "$pkg" ]]; then
     stow --no-folding "$pkg" && echo "  stowed: $pkg"
   fi
