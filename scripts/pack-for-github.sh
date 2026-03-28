@@ -11,7 +11,7 @@
 set -eo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-SJH_SKILLS_DIR="$HOME/workspace/sjh_skills"
+SJH_SKILLS_DIR="$HOME/workspace/sjh-skills"
 OUTPUT_DIR="${1:-$HOME}"
 BUNDLE_DIR=$(mktemp -d)
 
@@ -24,14 +24,14 @@ cd "$DOTFILES_DIR"
 git bundle create "$BUNDLE_DIR/dotfiles.bundle" --all 2>/dev/null
 echo "    ✓ $(du -h "$BUNDLE_DIR/dotfiles.bundle" | cut -f1)"
 
-# --- sjh_skills monorepo ---
+# --- sjh-skills monorepo ---
 if [[ -d "$SJH_SKILLS_DIR/.git" ]]; then
-    echo "  sjh_skills..."
+    echo "  sjh-skills..."
     cd "$SJH_SKILLS_DIR"
-    git bundle create "$BUNDLE_DIR/sjh_skills.bundle" --all 2>/dev/null
-    echo "    ✓ $(du -h "$BUNDLE_DIR/sjh_skills.bundle" | cut -f1)"
+    git bundle create "$BUNDLE_DIR/sjh-skills.bundle" --all 2>/dev/null
+    echo "    ✓ $(du -h "$BUNDLE_DIR/sjh-skills.bundle" | cut -f1)"
 else
-    echo "  sjh_skills — not found or not a git repo" >&2
+    echo "  sjh-skills — not found or not a git repo" >&2
 fi
 
 # --- Include sync script ---

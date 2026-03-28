@@ -21,7 +21,7 @@ done
 
 echo ""
 echo "=== [2/4] Clone sjh-skills ==="
-SJH_DIR="$HOME/workspace/sjh_skills"
+SJH_DIR="$HOME/workspace/sjh-skills"
 if [[ -d "$SJH_DIR" ]]; then
   echo "  already exists, skipping"
 else

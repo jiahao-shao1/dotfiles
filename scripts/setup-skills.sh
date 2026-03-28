@@ -5,14 +5,14 @@
 #   ./scripts/setup-skills.sh
 #
 # Monorepos:
-#   ~/workspace/sjh_skills/skills/*     → personal skills (open-source)
+#   ~/workspace/sjh-skills/skills/*     → personal skills (open-source)
 #   ~/workspace/robby-skills/skills/*   → company skills (internal)
 #
 # Third-party skills are installed via: bash scripts/install-skills.sh
 
 set -eo pipefail
 
-SJH_SKILLS_DIR="$HOME/workspace/sjh_skills/skills"
+SJH_SKILLS_DIR="$HOME/workspace/sjh-skills/skills"
 ROBBY_SKILLS_DIR="$HOME/workspace/robby-skills/skills"
 
 AGENTS_DIR="$HOME/.agents/skills"
@@ -41,8 +41,8 @@ link_skill() {
     echo "  ✓ $link_name → $src"
 }
 
-# --- Personal skills (sjh_skills) ---
-echo "=== Personal Skills (sjh_skills) ==="
+# --- Personal skills (sjh-skills) ---
+echo "=== Personal Skills (sjh-skills) ==="
 if [[ -d "$SJH_SKILLS_DIR" ]]; then
     for skill_dir in "$SJH_SKILLS_DIR"/*/; do
         [[ ! -d "$skill_dir" ]] && continue

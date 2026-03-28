@@ -44,7 +44,7 @@ Skills 来自三个来源，dotfiles 本身不存储 skill 内容：
 | 类型 | 来源 | 安装方式 | 示例 |
 |------|------|---------|------|
 | 第三方 | GitHub repos | `npx skills add -y -g`（`install-skills.sh`） | brainstorming, frontend-design, notebooklm, playwright-cli |
-| 个人 | `~/workspace/sjh_skills/skills/` | symlink（`setup-skills.sh`） | scholar-agent, cmux, web-fetcher, init-project, project-review |
+| 个人 | `~/workspace/sjh-skills/skills/` | symlink（`setup-skills.sh`） | scholar-agent, cmux, web-fetcher, init-project, project-review |
 | 公司 | `~/workspace/robby-skills/skills/` | symlink（`setup-skills.sh`） | robby-cluster-connect, robbyctl, yuque |
 
 公司 skills 仅在公司机器部署，相关脚本（`bootstrap-company.sh`）已 gitignore。
@@ -61,7 +61,7 @@ Skills 来自三个来源，dotfiles 本身不存储 skill 内容：
 |------|------|
 | 修改现有配置 | 直接编辑 `~/dotfiles/<包>/` 下的文件（symlink 自动生效） |
 | 添加第三方 skill | 在 `install-skills.sh` 中加一行 `npx skills add ...`，运行脚本 |
-| 添加个人 skill | 在 sjh_skills monorepo 中创建，`setup-skills.sh` 创建 symlink |
+| 添加个人 skill | 在 sjh-skills monorepo 中创建，`setup-skills.sh` 创建 symlink |
 | 添加新 stow 包 | 创建目录结构 → `stow --no-folding <包名>` → 更新 `install.sh` |
 | 新机器部署 | `git clone` → `bash scripts/bootstrap.sh` |
 
@@ -173,7 +173,7 @@ The next session only needs to read `HANDOFF.md` to continue. Delete the file wh
 
 ### Always Do
 
-- 修改 skill → 在对应 monorepo 中编辑（sjh_skills 或 robby-skills），不要编辑 symlink
+- 修改 skill → 在对应 monorepo 中编辑（sjh-skills 或 robby-skills），不要编辑 symlink
 - 使用 `stow --no-folding` 而非 `stow`（保持文件级 symlink）
 - 修改配置后验证 symlink 是否正确指向
 
