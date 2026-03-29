@@ -132,6 +132,7 @@ npx skills remove frontend-design
 | Claude Code skills | ✅ | ✅ |
 | Zsh + Starship | ✅ | ✅ |
 | Tmux | ✅ | ✅ |
+| lazygit / yazi / zoxide | ✅ | 手动安装 |
 | Ghostty | ✅ | — |
 | iTerm2 | ✅ | — |
 | 通知 | 系统原生 | 可配置 |
