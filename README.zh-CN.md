@@ -14,9 +14,10 @@ git clone git@github.com:jiahao-shao1/dotfiles.git ~/dotfiles && cd ~/dotfiles &
 
 1. 安装 GNU Stow（macOS 用 brew，Linux 从源码编译）
 2. 配置 Zsh：Oh My Zsh、插件、Starship 提示符
-3. 安装 Ghostty 配套工具（macOS：fastfetch、btop、Maple Mono 字体、cmux）
-4. 备份已有配置到 `~/.dotfiles-backup-<timestamp>/`
-5. 通过 `stow` 创建所有软链接
+3. 安装终端工具（lazygit、yazi、zoxide）及 yazi 插件
+4. 安装 Ghostty 配套工具（macOS：fastfetch、btop、Maple Mono 字体、cmux）
+5. 备份已有配置到 `~/.dotfiles-backup-<timestamp>/`
+6. 通过 `stow` 创建所有软链接
 
 `bootstrap.sh` 配置 skills：
 
@@ -110,8 +111,9 @@ npx skills remove frontend-design
 
 ## Shell 配置亮点
 
-- **Zsh**：Oh My Zsh + zsh-syntax-highlighting + zsh-autosuggestions + you-should-use
-- **Tmux**：反引号（`` ` ``）前缀键、vi 模式、鼠标支持、macOS 剪贴板集成
+- **Zsh**：Oh My Zsh + zsh-syntax-highlighting + zsh-autosuggestions + you-should-use + zoxide
+- **Tmux**：反引号（`` ` ``）前缀键、vi 模式、鼠标支持、macOS 剪贴板集成、lazygit 弹窗（`` ` + g ``）
+- **终端工具**：lazygit（Git TUI）、yazi（文件管理器，集成 git + lazygit 插件）、zoxide（智能 cd）
 - **Starship**：Catppuccin Mocha 主题、git 状态、语言版本显示、命令耗时
 - **Ghostty**：Catppuccin Mocha、Maple Mono NF CN 字体、85% 透明度 + 模糊、25M 回滚缓冲区
 

@@ -14,9 +14,10 @@ git clone git@github.com:jiahao-shao1/dotfiles.git ~/dotfiles && cd ~/dotfiles &
 
 1. Install GNU Stow (brew on macOS, from source on Linux)
 2. Set up Zsh with Oh My Zsh, plugins, and Starship prompt
-3. Install Ghostty companion tools (macOS: fastfetch, btop, Maple Mono font, cmux)
-4. Back up existing configs to `~/.dotfiles-backup-<timestamp>/`
-5. Create symlinks via `stow` for all managed packages
+3. Install terminal tools (lazygit, yazi, zoxide) and yazi plugins
+4. Install Ghostty companion tools (macOS: fastfetch, btop, Maple Mono font, cmux)
+5. Back up existing configs to `~/.dotfiles-backup-<timestamp>/`
+6. Create symlinks via `stow` for all managed packages
 
 `bootstrap.sh` sets up skills:
 
@@ -110,8 +111,9 @@ npx skills remove frontend-design
 
 ## Shell Config Highlights
 
-- **Zsh**: Oh My Zsh + zsh-syntax-highlighting + zsh-autosuggestions + you-should-use
-- **Tmux**: Backtick (`` ` ``) prefix, vi mode, mouse support, macOS clipboard integration
+- **Zsh**: Oh My Zsh + zsh-syntax-highlighting + zsh-autosuggestions + you-should-use + zoxide
+- **Tmux**: Backtick (`` ` ``) prefix, vi mode, mouse support, macOS clipboard integration, lazygit popup (`` ` + g ``)
+- **Terminal tools**: lazygit (git TUI), yazi (file manager with git + lazygit plugins), zoxide (smart cd)
 - **Starship**: Catppuccin Mocha theme, git status, language version display, command duration
 - **Ghostty**: Catppuccin Mocha, Maple Mono NF CN font, 85% opacity with blur, 25M scrollback
 

@@ -29,6 +29,9 @@ export PATH="$HOME/.local/bin:$PATH"
 # Starship prompt
 eval "$(starship init zsh)"
 
+# Zoxide (smarter cd)
+eval "$(zoxide init zsh)"
+
 # Locale
 export LANG=en_US.UTF-8
 export LC_ALL=en_US.UTF-8
@@ -81,6 +84,9 @@ alias tns="tmux new -s"
 alias tls="tmux ls"
 alias tat="tmux attach -t"
 
+# lazygit
+alias lg="lazygit"
+
 # pyenv
 alias pyv="pyenv versions"
 alias pyi="pyenv install"
@@ -104,6 +110,15 @@ alias keys="cat ~/.terminal-keys.txt"
 # ============================================================================
 # Functions
 # ============================================================================
+
+# yazi wrapper: cd to yazi's cwd on exit
+function y() {
+    local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+    command yazi "$@" --cwd-file="$tmp"
+    IFS= read -r -d '' cwd < "$tmp"
+    [ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd"
+    rm -f -- "$tmp"
+}
 
 # ca: Activate named venv
 function ca() {

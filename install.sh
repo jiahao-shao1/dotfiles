@@ -80,7 +80,29 @@ if [[ "$(uname)" == "Darwin" ]] && [ -d "$DOTFILES_DIR/iterm2" ]; then
     echo "iTerm2 will load preferences from $DOTFILES_DIR/iterm2"
 fi
 
-# 2d. Install Ghostty companion tools (macOS only: Fastfetch, Btop, Maple Mono font, cmux)
+# 2d. Install terminal tools (lazygit, yazi, zoxide)
+echo "Installing terminal tools..."
+for tool in lazygit yazi zoxide; do
+    if ! command -v "$tool" &>/dev/null; then
+        echo "  Installing $tool..."
+        if [[ "$(uname)" == "Darwin" ]]; then
+            brew install "$tool"
+        else
+            echo "  Skipping $tool on Linux (install manually)"
+        fi
+    else
+        echo "  $tool already installed."
+    fi
+done
+
+# 2e. Install yazi plugins
+if command -v ya &>/dev/null; then
+    echo "Installing yazi plugins..."
+    ya pkg add yazi-rs/plugins:git 2>/dev/null || true
+    ya pkg add Lil-Dank/lazygit 2>/dev/null || true
+fi
+
+# 2f. Install Ghostty companion tools (macOS only: Fastfetch, Btop, Maple Mono font, cmux)
 if [[ "$(uname)" == "Darwin" ]]; then
     echo "Installing Ghostty companion tools..."
     for tool in fastfetch btop; do
