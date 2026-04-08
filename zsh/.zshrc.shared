@@ -5,6 +5,11 @@
 # Load private env vars (API keys, tokens)
 [[ -f ~/.env ]] && source ~/.env
 
+# Global proxy (ClashX)
+export http_proxy=http://127.0.0.1:7890
+export https_proxy=http://127.0.0.1:7890
+export all_proxy=socks5://127.0.0.1:7890
+
 # History
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=50000
@@ -92,13 +97,14 @@ alias pyv="pyenv versions"
 alias pyi="pyenv install"
 alias pyl="pyenv local"
 
-# Proxy
-alias proxy="export http_proxy=http://127.0.0.1:7890 && export https_proxy=http://127.0.0.1:7890"
-alias unproxy="unset http_proxy && unset https_proxy"
-# cmux + Claude Code
-alias cc='proxy && claude --dangerously-skip-permissions'
-alias cct='proxy && cmux claude-teams --dangerously-skip-permissions'
-alias cx='proxy && codex --dangerously-bypass-approvals-and-sandbox'
+# Proxy (globally set above, these toggle on/off)
+alias unproxy="unset http_proxy https_proxy all_proxy"
+alias reproxy="export http_proxy=http://127.0.0.1:7890 https_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890"
+# Claude Code
+export CLAUDE_CODE_NO_FLICKER=1  # 全屏渲染模式（防花屏/滚动问题）
+alias cc='claude --dangerously-skip-permissions'
+alias cct='cmux claude-teams --dangerously-skip-permissions'
+alias cx='codex --dangerously-bypass-approvals-and-sandbox'
 
 # Dotfiles
 alias dot-sync="~/dotfiles/dot-sync.sh"
