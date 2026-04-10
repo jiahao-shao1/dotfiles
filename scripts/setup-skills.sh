@@ -5,14 +5,13 @@
 #   ./scripts/setup-skills.sh
 #
 # Monorepos:
-#   ~/workspace/sjh-skills/skills/*     → personal skills (open-source)
 #   ~/workspace/robby-skills/skills/*   → company skills (internal)
 #
+# Note: sjh-skills are now installed via Claude Code plugin (sjh-skills@sjh-skills).
 # Third-party skills are installed via: bash scripts/install-skills.sh
 
 set -eo pipefail
 
-SJH_SKILLS_DIR="$HOME/workspace/sjh-skills/skills"
 ROBBY_SKILLS_DIR="$HOME/workspace/robby-skills/skills"
 
 AGENTS_DIR="$HOME/.agents/skills"
@@ -41,25 +40,7 @@ link_skill() {
     echo "  ✓ $link_name → $src"
 }
 
-# --- Personal skills (sjh-skills) ---
-echo "=== Personal Skills (sjh-skills) ==="
-if [[ -d "$SJH_SKILLS_DIR" ]]; then
-    for skill_dir in "$SJH_SKILLS_DIR"/*/; do
-        [[ ! -d "$skill_dir" ]] && continue
-        skill_name=$(basename "$skill_dir")
-        # remote-cluster-agent is open-source only; we use robby-cluster-connect internally
-        [[ "$skill_name" == "remote-cluster-agent" ]] && continue
-        # scholar-agent maps to scholar-inbox link name (skill trigger name)
-        link_name="$skill_name"
-        [[ "$skill_name" == "scholar-agent" ]] && link_name="scholar-inbox"
-        link_skill "$skill_dir" "$link_name"
-    done
-else
-    echo "  ⚠ $SJH_SKILLS_DIR not found (clone sjh-skills first)"
-fi
-
 # --- Company skills (robby-skills) ---
-echo
 echo "=== Company Skills (robby-skills) ==="
 if [[ -d "$ROBBY_SKILLS_DIR" ]]; then
     for skill_dir in "$ROBBY_SKILLS_DIR"/*/; do
