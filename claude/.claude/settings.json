@@ -55,8 +55,7 @@
     "claude-hud@claude-hud": true,
     "codex@openai-codex": true,
     "superpowers@claude-plugins-official": true,
-    "sjh-skills@sjh-skills": true,
-    "chrome-devtools-mcp@claude-plugins-official": false
+    "sjh-skills@sjh-skills": true
   },
   "extraKnownMarketplaces": {
     "claude-hud": {
@@ -81,12 +80,6 @@
       "source": {
         "source": "github",
         "repo": "jiahao-shao1/sjh-skills"
-      }
-    },
-    "chrome-devtools-plugins": {
-      "source": {
-        "source": "github",
-        "repo": "ChromeDevTools/chrome-devtools-mcp"
       }
     }
   },
