@@ -103,7 +103,7 @@ dot-sync status    # 干运行：显示会同步什么
 
 ## Experience Capture
 
-When a non-trivial problem is solved during a session (debugging, workaround, design trade-off, etc.), **immediately** write the experience to the corresponding domain file in `.claude/knowledge/` — don't wait until the session ends.
+When a non-trivial problem is solved during a session (debugging, workaround, design trade-off, etc.), **immediately** write the experience to the corresponding domain file in `docs/knowledge/` — don't wait until the session ends.
 
 ### Writing Guidelines
 
@@ -136,9 +136,9 @@ When a non-trivial problem is solved during a session (debugging, workaround, de
 ### Capture Path
 
 ```
-discovered in session → .claude/knowledge/ (hot experience)
-                                ↓ validated multiple times
-                         .claude/rules/ (hard rules)
+discovered in session → docs/knowledge/ (hot experience)
+                               ↓ validated multiple times
+                        .claude/rules/ (hard rules)
 ```
 
 ## Context Management

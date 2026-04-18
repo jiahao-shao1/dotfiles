@@ -5,10 +5,7 @@
 # Load private env vars (API keys, tokens)
 [[ -f ~/.env ]] && source ~/.env
 
-# Global proxy (ClashX)
-export http_proxy=http://127.0.0.1:7890
-export https_proxy=http://127.0.0.1:7890
-export all_proxy=socks5://127.0.0.1:7890
+# Proxy off by default; use `proxy` / `unproxy` to toggle
 
 # History
 HISTFILE="$HOME/.zsh_history"
@@ -29,7 +26,7 @@ source $ZSH/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.plugi
 source $ZSH/custom/plugins/you-should-use/you-should-use.plugin.zsh
 
 # PATH (must be before starship init)
-export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.local/bin:$HOME/go/bin:$PATH"
 
 # Starship prompt
 eval "$(starship init zsh)"
@@ -97,14 +94,14 @@ alias pyv="pyenv versions"
 alias pyi="pyenv install"
 alias pyl="pyenv local"
 
-# Proxy (globally set above, these toggle on/off)
+# Proxy toggle
+alias proxy="export http_proxy=http://127.0.0.1:7890 https_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890"
 alias unproxy="unset http_proxy https_proxy all_proxy"
-alias reproxy="export http_proxy=http://127.0.0.1:7890 https_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890"
 # Claude Code
 export CLAUDE_CODE_NO_FLICKER=1  # 全屏渲染模式（防花屏/滚动问题）
-alias cc='claude --dangerously-skip-permissions'
-alias cct='cmux claude-teams --dangerously-skip-permissions'
-alias cx='codex --dangerously-bypass-approvals-and-sandbox'
+alias cc='http_proxy=http://127.0.0.1:7890 https_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890 claude --permission-mode auto'
+alias cct='http_proxy=http://127.0.0.1:7890 https_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890 cmux claude-teams --permission-mode auto'
+alias cx='http_proxy=http://127.0.0.1:7890 https_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890 codex --dangerously-bypass-approvals-and-sandbox'
 
 # Dotfiles
 alias dot-sync="~/dotfiles/dot-sync.sh"
