@@ -2,7 +2,7 @@
 
 [English](README.md) | 中文
 
-> **跨机器配置同步** — Claude Code、OpenCode、Zsh、Tmux、Starship、Ghostty 和 iTerm2，基于 [GNU Stow](https://www.gnu.org/software/stow/)。
+> **跨机器配置同步** — Claude Code、Zsh、Tmux、Starship、Ghostty 和 iTerm2，基于 [GNU Stow](https://www.gnu.org/software/stow/)。
 
 ## 快速开始
 
@@ -31,7 +31,6 @@ git clone git@github.com:jiahao-shao1/dotfiles.git ~/dotfiles && cd ~/dotfiles &
 ```
 dotfiles/
 ├── claude/          # ~/.claude — settings.json、CLAUDE.md、skills、rules
-├── opencode/        # ~/.config/opencode — opencode.json
 ├── zsh/             # ~/.zshrc.shared — 共享 shell 配置
 ├── tmux/            # ~/.tmux.conf
 ├── starship/        # ~/.config/starship.toml
@@ -65,7 +64,6 @@ dotfiles/
 | `~/.tmux.conf` | |
 | `~/.config/starship.toml` | |
 | `~/.config/ghostty/config` | |
-| `~/.config/opencode/opencode.json` | |
 
 ## 日常使用
 

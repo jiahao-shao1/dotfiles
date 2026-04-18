@@ -207,12 +207,6 @@ echo "Stowing zsh..."
 stow -R --no-folding zsh
 echo "Stowing starship..."
 stow -R --no-folding starship
-echo "Stowing opencode..."
-mkdir -p "$HOME/.config/opencode"
-if [ -f "$HOME/.config/opencode/opencode.json" ] && [ ! -L "$HOME/.config/opencode/opencode.json" ]; then
-    mv "$HOME/.config/opencode/opencode.json" "$HOME/.config/opencode/opencode.json.bak"
-fi
-stow -R --no-folding opencode
 echo "Stowing tmux..."
 stow -R tmux
 if [[ "$(uname)" == "Darwin" ]]; then

@@ -2,7 +2,7 @@
 
 English | [中文](README.zh-CN.md)
 
-> **Cross-machine config sync** — Claude Code, OpenCode, Zsh, Tmux, Starship, Ghostty, and iTerm2, powered by [GNU Stow](https://www.gnu.org/software/stow/).
+> **Cross-machine config sync** — Claude Code, Zsh, Tmux, Starship, Ghostty, and iTerm2, powered by [GNU Stow](https://www.gnu.org/software/stow/).
 
 ## Quick Start
 
@@ -31,7 +31,6 @@ git clone git@github.com:jiahao-shao1/dotfiles.git ~/dotfiles && cd ~/dotfiles &
 ```
 dotfiles/
 ├── claude/          # ~/.claude — settings.json, CLAUDE.md, skills, rules
-├── opencode/        # ~/.config/opencode — opencode.json
 ├── zsh/             # ~/.zshrc.shared — shared shell config
 ├── tmux/            # ~/.tmux.conf
 ├── starship/        # ~/.config/starship.toml
@@ -65,7 +64,6 @@ This means **editing `~/.claude/settings.json` edits the repo file directly** �
 | `~/.tmux.conf` | |
 | `~/.config/starship.toml` | |
 | `~/.config/ghostty/config` | |
-| `~/.config/opencode/opencode.json` | |
 
 ## Daily Use
 
