@@ -65,6 +65,7 @@ dotfiles/
 | `~/.tmux.conf` | |
 | `~/.config/starship.toml` | |
 | `~/.config/ghostty/config` | |
+| `~/.config/opencode/opencode.json` | |
 
 ## 日常使用
 
