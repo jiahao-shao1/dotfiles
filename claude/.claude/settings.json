@@ -1,6 +1,16 @@
 {
   "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "https_proxy": "http://127.0.0.1:7892",
+    "http_proxy": "http://127.0.0.1:7892",
+    "all_proxy": "socks5://127.0.0.1:7892",
+    "HTTPS_PROXY": "http://127.0.0.1:7892",
+    "HTTP_PROXY": "http://127.0.0.1:7892",
+    "ALL_PROXY": "socks5://127.0.0.1:7892",
+    "NO_PROXY": "localhost,127.0.0.1,::1,.alipay.com,.alibaba-inc.com,aistudioproxy.alipay.com,10.0.0.0/8"
+  },
+  "permissions": {
+    "defaultMode": "auto"
   },
   "hooks": {
     "Stop": [
@@ -90,7 +100,6 @@
   "effortLevel": "medium",
   "skipDangerousModePermissionPrompt": true,
   "skipAutoPermissionPrompt": true,
-  "permissions": {
-    "defaultMode": "auto"
-  }
+  "theme": "light-ansi",
+  "agentPushNotifEnabled": true
 }
