@@ -95,12 +95,13 @@ alias pyi="pyenv install"
 alias pyl="pyenv local"
 
 # Proxy toggle
+export no_proxy=localhost,127.0.0.1
 alias proxy="export http_proxy=http://127.0.0.1:7890 https_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890"
 alias unproxy="unset http_proxy https_proxy all_proxy"
 # Claude Code
 export CLAUDE_CODE_NO_FLICKER=1  # 全屏渲染模式（防花屏/滚动问题）
 alias cc='http_proxy=http://127.0.0.1:7890 https_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890 claude --permission-mode auto'
-alias cct='http_proxy=http://127.0.0.1:7890 https_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890 cmux claude-teams --permission-mode auto'
+alias cct='http_proxy=http://127.0.0.1:7890 https_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890 CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 claude --permission-mode auto'
 alias cx='http_proxy=http://127.0.0.1:7890 https_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890 codex --dangerously-bypass-approvals-and-sandbox'
 
 # Dotfiles
