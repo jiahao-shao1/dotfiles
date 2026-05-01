@@ -4,5 +4,7 @@
 # Internal company skills (not for GitHub)
 agents/.agents/skills/yuque/
 claude/.claude/skills/yuque
+agents/.agents/skills/read-arxiv-paper/
+claude/.claude/skills/read-arxiv-paper
 scripts/sync-to-github.sh
 scripts/bootstrap-company.sh
