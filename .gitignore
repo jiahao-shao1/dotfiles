@@ -8,3 +8,4 @@ agents/.agents/skills/read-arxiv-paper/
 claude/.claude/skills/read-arxiv-paper
 scripts/sync-to-github.sh
 scripts/bootstrap-company.sh
+claude/.claude/settings.json
