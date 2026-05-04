@@ -7,9 +7,9 @@ MSG="${1:-Claude Code}"
 if [ "$(uname)" = "Darwin" ]; then
   if command -v cmux &>/dev/null && [ -n "$CMUX_SURFACE_ID" ]; then
     # cmux 环境：只用 cmux notify，不发系统通知（避免重复）
-    cmux notify "Claude Code" "$MSG" 2>/dev/null
+    cmux notify "Claude Code" "$MSG" >/dev/null 2>&1
   else
-    osascript -e "display notification \"$MSG\" with title \"Claude Code\""
+    osascript -e "display notification \"$MSG\" with title \"Claude Code\"" >/dev/null 2>&1
   fi
 else
   curl -s -X POST \
