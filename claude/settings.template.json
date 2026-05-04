@@ -1,0 +1,102 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git add:*)",
+      "Bash(git branch:*)",
+      "Bash(git merge:*)",
+      "Bash(open:*)",
+      "Bash(cd:*)",
+      "Bash(ssh:*)",
+      "WebSearch"
+    ],
+    "defaultMode": "auto"
+  },
+  "hooks": {
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/dotfiles/claude-notify.sh '📢 Claude Code needs your attention'"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "ExitPlanMode",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"systemMessage\": \"Plan finalized. Consider running /codex-review for cross-model verification.\"}'",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "SessionStart": [],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/dotfiles/claude-notify.sh '🤖 Claude Code finished working'"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/dotfiles/claude-notify.sh '🎯 Claude Code subagent completed'"
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "claude-hud@claude-hud": true,
+    "codex@openai-codex": true,
+    "sjh-skills@sjh-skills": true,
+    "superpowers@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "claude-hud": {
+      "source": {
+        "source": "github",
+        "repo": "jarrodwatts/claude-hud"
+      },
+      "autoUpdate": true
+    },
+    "openai-codex": {
+      "source": {
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
+      },
+      "autoUpdate": true
+    },
+    "sjh-skills": {
+      "source": {
+        "source": "github",
+        "repo": "jiahao-shao1/sjh-skills"
+      },
+      "autoUpdate": true
+    },
+    "superpowers-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "obra/superpowers-marketplace"
+      },
+      "autoUpdate": true
+    }
+  },
+  "autoMemoryEnabled": false,
+  "skipDangerousModePermissionPrompt": true,
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true,
+  "awaySummaryEnabled": false
+}

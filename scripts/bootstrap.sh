@@ -9,37 +9,50 @@ set -eo pipefail
 DOTFILES_DIR="$HOME/dotfiles"
 SCRIPTS_DIR="$DOTFILES_DIR/scripts"
 
-echo "=== [1/4] Stow dotfiles ==="
-cd "$DOTFILES_DIR"
-pkgs=(zsh tmux claude agents)
-[[ "$(uname)" == "Darwin" ]] && pkgs+=(ghostty)
-for pkg in "${pkgs[@]}"; do
-  if [[ -d "$pkg" ]]; then
-    stow --no-folding "$pkg" && echo "  stowed: $pkg"
-  fi
-done
+echo "=== [1/6] Install dependencies ==="
+bash "$DOTFILES_DIR/install.sh"
 
 echo ""
-echo "=== [2/4] Clone sjh-skills ==="
-SJH_DIR="$HOME/workspace/sjh-skills"
-if [[ -d "$SJH_DIR" ]]; then
-  echo "  already exists, skipping"
+echo "=== [2/6] Initialize Claude Code settings ==="
+mkdir -p "$HOME/.claude"
+if [[ ! -e "$HOME/.claude/settings.json" ]]; then
+    cp "$DOTFILES_DIR/claude/settings.template.json" "$HOME/.claude/settings.json"
+    echo "  Copied settings.template.json → ~/.claude/settings.json"
+    echo "  Customize as needed (proxy, model, etc.)"
 else
-  mkdir -p "$HOME/workspace"
-  git clone git@github.com:jiahao-shao1/sjh-skills.git "$SJH_DIR"
+    echo "  ~/.claude/settings.json already exists, skipping"
+    echo "  Template available at: $DOTFILES_DIR/claude/settings.template.json"
 fi
 
 echo ""
-echo "=== [3/4] Setup monorepo skills ==="
+echo "=== [3/6] Clone sjh-skills ==="
+SJH_DIR="$HOME/workspace/sjh-skills"
+if [[ -d "$SJH_DIR" ]]; then
+    echo "  already exists, skipping"
+else
+    mkdir -p "$HOME/workspace"
+    git clone git@github.com:jiahao-shao1/sjh-skills.git "$SJH_DIR"
+fi
+
+echo ""
+echo "=== [4/6] Setup monorepo skills ==="
 bash "$SCRIPTS_DIR/setup-skills.sh"
 
 echo ""
-echo "=== [4/4] Install third-party skills ==="
+echo "=== [5/6] Install third-party skills ==="
 bash "$SCRIPTS_DIR/install-skills.sh"
 
 echo ""
-echo "=== Optional CLI tools ==="
-echo "  pipx install \"notebooklm-py[browser]\"   # NotebookLM API"
-echo "  npm install -g @playwright/cli@latest  # Browser automation"
+echo "=== [6/6] Setup MCP servers ==="
+bash "$SCRIPTS_DIR/setup-mcp.sh"
+
 echo ""
-echo "Bootstrap complete!"
+echo "=== Bootstrap complete! ==="
+echo ""
+echo "Post-setup checklist:"
+echo "  1. Verify: readlink ~/.zshrc.shared"
+echo "  2. Verify: readlink ~/.tmux.conf"
+echo "  3. Verify: cat ~/.claude/settings.json | head -5"
+echo "  4. Customize ~/.claude/settings.json (proxy, model) if needed"
+echo "  5. Optional: pipx install \"notebooklm-py[browser]\""
+echo "  6. Optional: npm install -g @playwright/cli@latest"

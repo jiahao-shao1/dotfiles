@@ -43,6 +43,14 @@ npx skills add jimliu/baoyu-skills \
 echo "[5/5] microsoft/playwright-cli..."
 npx skills add microsoft/playwright-cli $COMMON_FLAGS
 
+# davila7/claude-code-templates (markitdown)
+echo "[6/7] davila7/claude-code-templates (markitdown)..."
+npx skills add https://github.com/davila7/claude-code-templates --skill markitdown $COMMON_FLAGS
+
+# blader/humanizer
+echo "[7/7] blader/humanizer..."
+npx skills add https://github.com/blader/humanizer --skill humanizer $COMMON_FLAGS
+
 echo ""
 echo "Done! Verify with: npx skills list -g"
 echo ""

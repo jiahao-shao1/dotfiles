@@ -19,7 +19,7 @@
 | 目录 | 目标路径 | 内容 |
 |------|----------|------|
 | `agents/` | `~/.agents/` | 目前为空（skills 已迁移，见下方 Skill 管理） |
-| `claude/` | `~/.claude/` | settings.json、CLAUDE.md、rules |
+| `claude/` | `~/.claude/` | CLAUDE.md、rules、settings.template.json（模板） |
 | `zsh/` | `~/` | `.zshrc.shared` — 跨机器共享的 shell 配置 |
 | `tmux/` | `~/` | `.tmux.conf` |
 | `starship/` | `~/.config/` | `starship.toml`（Catppuccin Mocha 主题） |
@@ -30,10 +30,11 @@
 
 | 文件 | 用途 |
 |------|------|
-| `scripts/bootstrap.sh` | 新机器一键部署：stow + clone sjh-skills + setup skills + install 第三方 skills |
+| `scripts/bootstrap.sh` | 新机器一键部署：install.sh → settings 初始化 → skills → MCP |
 | `scripts/setup-skills.sh` | 创建个人/公司 skill monorepo 的 symlink |
 | `scripts/install-skills.sh` | 通过 `npx skills add -y -g` 安装所有第三方 skills |
-| `install.sh` | 基础安装：Stow、Zsh 插件、Ghostty 工具 |
+| `scripts/setup-mcp.sh` | 注册 Claude Code MCP servers |
+| `install.sh` | 依赖安装（Stow、Zsh 插件、终端工具）+ stow 部署 |
 | `dot-sync.sh` | 同步脚本：检测变更 → commit → push |
 | `claude-notify.sh` | 跨平台通知（macOS osascript / Linux Telegram） |
 

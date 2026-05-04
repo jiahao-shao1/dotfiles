@@ -19,9 +19,10 @@ if ! command -v stow &>/dev/null; then
         ./configure --prefix="$HOME/.local"
         make install
         cd "$DOTFILES_DIR"
-        echo 'export PERL5LIB="$HOME/.local/share/perl/5.34.0${PERL5LIB:+:$PERL5LIB}"' >> ~/.zshrc
+        PERL_VERSION=$(perl -e 'print $^V' | sed 's/^v//')
+        echo "export PERL5LIB=\"\$HOME/.local/share/perl/${PERL_VERSION}\${PERL5LIB:+:\$PERL5LIB}\"" >> ~/.zshrc
         echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
-        export PERL5LIB="$HOME/.local/share/perl/5.34.0${PERL5LIB:+:$PERL5LIB}"
+        export PERL5LIB="$HOME/.local/share/perl/${PERL_VERSION}${PERL5LIB:+:$PERL5LIB}"
         export PATH="$HOME/.local/bin:$PATH"
         rm -rf /tmp/stow-latest.tar.gz /tmp/stow-*/
     fi
@@ -201,19 +202,15 @@ echo "Machine: $MACHINE_HOST"
 
 # 6. Stow packages
 cd "$DOTFILES_DIR"
-echo "Stowing claude..."
-stow -R --no-folding $STOW_IGNORE claude
-echo "Stowing zsh..."
-stow -R --no-folding zsh
-echo "Stowing starship..."
-stow -R --no-folding starship
-echo "Stowing tmux..."
-stow -R tmux
-if [[ "$(uname)" == "Darwin" ]]; then
-    echo "Stowing ghostty..."
-    mkdir -p "$HOME/.config/ghostty"
-    stow -R --no-folding ghostty
-fi
+pkgs=(claude agents zsh starship tmux)
+[[ "$(uname)" == "Darwin" ]] && pkgs+=(ghostty)
+for pkg in "${pkgs[@]}"; do
+    if [[ -d "$pkg" ]]; then
+        echo "Stowing $pkg..."
+        [[ "$pkg" == "ghostty" ]] && mkdir -p "$HOME/.config/ghostty"
+        stow -R --no-folding $STOW_IGNORE "$pkg"
+    fi
+done
 
 # 7. Ensure .zshrc sources .zshrc.shared
 if [ -f "$HOME/.zshrc" ]; then
