@@ -24,6 +24,15 @@ else
     echo "  Template available at: $DOTFILES_DIR/claude/settings.template.json"
 fi
 
+# Link AGENTS.md to Codex global path so Codex/OpenAI agents share the same instructions
+mkdir -p "$HOME/.codex"
+if [[ ! -e "$HOME/.codex/AGENTS.md" ]]; then
+    ln -s ../dotfiles/claude/.claude/AGENTS.md "$HOME/.codex/AGENTS.md"
+    echo "  Linked ~/.codex/AGENTS.md → dotfiles/claude/.claude/AGENTS.md"
+else
+    echo "  ~/.codex/AGENTS.md already exists, skipping"
+fi
+
 echo ""
 echo "=== [3/6] Clone sjh-skills ==="
 SJH_DIR="$HOME/workspace/sjh-skills"
