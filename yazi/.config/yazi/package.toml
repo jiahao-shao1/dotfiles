@@ -1,0 +1,22 @@
+[[plugin.deps]]
+use = "boydaihungst/mediainfo"
+rev = "cc12f3f"
+hash = "b92e44ad5004f1b45e5c3d717a60ed24"
+
+[[plugin.deps]]
+use = "AnirudhG07/rich-preview"
+rev = "843c3fa"
+hash = "b4040931f0d2f9670ddb4923e55cd881"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:git"
+rev = "1962818"
+hash = "126a014a2de2f0acd20316d190c640eb"
+
+[[plugin.deps]]
+use = "Lil-Dank/lazygit"
+rev = "8c4086c"
+hash = "85316b5e9abeae2531d3e5d02a094381"
+
+[flavor]
+deps = []

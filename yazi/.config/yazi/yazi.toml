@@ -1,0 +1,33 @@
+[mgr]
+ratio = [1, 2, 4]
+
+[[plugin.prepend_fetchers]]
+id    = "git"
+url   = "*"
+run   = "git"
+group = "personal"
+
+[[plugin.prepend_fetchers]]
+id    = "git"
+url   = "*/"
+run   = "git"
+group = "personal"
+
+[plugin]
+  prepend_preloaders = [
+    # Replace magick, image, video with mediainfo
+    { mime = "{audio,video,image}/*", run = "mediainfo" },
+    { mime = "application/subrip", run = "mediainfo" },
+    # Adobe Illustrator
+    { mime = "application/postscript", run = "mediainfo" },
+  ]
+  prepend_previewers = [
+    # Replace magick, image, video with mediainfo
+    { mime = "{audio,video,image}/*", run = "mediainfo"},
+    { mime = "application/subrip", run = "mediainfo" },
+    # Adobe Illustrator
+    { mime = "application/postscript", run = "mediainfo" },
+  ]
+  # There are more extensions which are supported by mediainfo.
+  # Just add file's MIME type to `previewers`, `preloaders` above.
+  # https://mediaarea.net/en/MediaInfo/Support/Formats

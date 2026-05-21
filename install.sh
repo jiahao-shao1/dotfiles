@@ -202,7 +202,7 @@ echo "Machine: $MACHINE_HOST"
 
 # 6. Stow packages
 cd "$DOTFILES_DIR"
-pkgs=(claude agents zsh starship tmux)
+pkgs=(claude agents zsh starship tmux yazi)
 [[ "$(uname)" == "Darwin" ]] && pkgs+=(ghostty)
 for pkg in "${pkgs[@]}"; do
     if [[ -d "$pkg" ]]; then

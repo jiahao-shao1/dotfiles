@@ -1,0 +1,9 @@
+[[mgr.prepend_keymap]]
+on   = [ "g", "i" ]
+run  = "plugin lazygit"
+desc = "Open lazygit"
+
+[[mgr.prepend_keymap]]
+on   = [ "g", "r" ]
+run  = 'shell -- ya emit cd "$(git rev-parse --show-toplevel)"'
+desc = "Go to git repo root"

@@ -26,7 +26,7 @@ source $ZSH/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.plugi
 source $ZSH/custom/plugins/you-should-use/you-should-use.plugin.zsh
 
 # PATH (must be before starship init)
-export PATH="$HOME/.local/bin:$HOME/go/bin:$PATH"
+export PATH="$HOME/.local/nodejs/current/bin:$HOME/.local/bin:$HOME/go/bin:$PATH"
 
 # Starship prompt
 eval "$(starship init zsh)"
