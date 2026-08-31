@@ -4,8 +4,9 @@
 # Usage:
 #   ./scripts/setup-skills.sh
 #
-# Monorepos:
-#   ~/workspace/robby-skills/skills/*   → company skills (internal)
+# Sources:
+#   ~/workspace/robby-skills/skills/*  → company skills (internal)
+#   ~/workspace/robby-cluster-connect → active cluster connection skill
 #
 # Note: sjh-skills are now installed via Claude Code plugin (sjh-skills@sjh-skills).
 # Third-party skills are installed via: bash scripts/install-skills.sh
@@ -13,6 +14,7 @@
 set -eo pipefail
 
 ROBBY_SKILLS_DIR="$HOME/workspace/robby-skills/skills"
+ROBBY_CLUSTER_CONNECT_DIR="$HOME/workspace/robby-cluster-connect"
 
 AGENTS_DIR="$HOME/.agents/skills"
 CLAUDE_DIR="$HOME/.claude/skills"
@@ -46,10 +48,21 @@ if [[ -d "$ROBBY_SKILLS_DIR" ]]; then
     for skill_dir in "$ROBBY_SKILLS_DIR"/*/; do
         [[ ! -d "$skill_dir" ]] && continue
         [[ "$(basename "$skill_dir")" == ".git" ]] && continue
+        # The active cluster skill moved to its own repository. Keep the old
+        # source checkout for history, but never reinstall it from this loop.
+        [[ "$(basename "$skill_dir")" == "robby-cluster-connect" ]] && continue
         link_skill "$skill_dir"
     done
 else
     echo "  ⚠ $ROBBY_SKILLS_DIR not found (skip on personal Mac)"
+fi
+
+echo
+echo "=== Robby Cluster Connect (standalone) ==="
+if [[ -d "$ROBBY_CLUSTER_CONNECT_DIR" ]]; then
+    link_skill "$ROBBY_CLUSTER_CONNECT_DIR" "robby-cluster-connect"
+else
+    echo "  ⚠ $ROBBY_CLUSTER_CONNECT_DIR not found"
 fi
 
 echo

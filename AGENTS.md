@@ -46,7 +46,7 @@ Skills 来自三个来源，dotfiles 本身不存储 skill 内容：
 |------|------|---------|------|
 | 第三方 | GitHub repos | `npx skills add -y -g`（`install-skills.sh`） | brainstorming, frontend-design, notebooklm, playwright-cli |
 | 个人 | `~/workspace/sjh-skills/skills/` | symlink（`setup-skills.sh`） | scholar-agent, cmux, web-fetcher, init-project, project-review |
-| 公司 | `~/workspace/robby-skills/skills/` | symlink（`setup-skills.sh`） | robby-cluster-connect, robbyctl, yuque |
+| 公司 | `~/workspace/robby-skills/skills/` + `~/workspace/robby-cluster-connect/` | symlink（`setup-skills.sh`） | aistudio-jobs 等；集群连接 skill 已拆成独立仓库 |
 
 公司 skills 仅在公司机器部署，相关脚本（`bootstrap-company.sh`）已 gitignore。
 
