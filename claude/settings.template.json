@@ -61,8 +61,7 @@
   "enabledPlugins": {
     "claude-hud@claude-hud": true,
     "codex@openai-codex": true,
-    "sjh-skills@sjh-skills": true,
-    "superpowers@claude-plugins-official": true
+    "sjh-skills@sjh-skills": true
   },
   "extraKnownMarketplaces": {
     "claude-hud": {
@@ -83,13 +82,6 @@
       "source": {
         "source": "github",
         "repo": "jiahao-shao1/sjh-skills"
-      },
-      "autoUpdate": true
-    },
-    "superpowers-marketplace": {
-      "source": {
-        "source": "github",
-        "repo": "obra/superpowers-marketplace"
       },
       "autoUpdate": true
     }

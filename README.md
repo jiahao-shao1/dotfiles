@@ -85,8 +85,8 @@ Skills come from three sources:
 
 | Source | Managed by | Skills |
 |--------|-----------|--------|
-| **Third-party** | `npx skills add` ([install-skills.sh](scripts/install-skills.sh)) | brainstorming, writing-plans, executing-plans, dispatching-parallel-agents, subagent-driven-development, using-git-worktrees, frontend-design, skill-creator, find-skills, frontend-slides, baoyu-infographic, baoyu-xhs-images, playwright-cli, notebooklm |
-| **Personal** | [sjh-skills](https://github.com/jiahao-shao1/sjh-skills) monorepo (symlink) | scholar-agent, cmux, codex-review, daily-summary, init-project, notion-lifeos, project-review, web-fetcher |
+| **Third-party** | `npx skills add` ([install-skills.sh](scripts/install-skills.sh)) | frontend-design, skill-creator, find-skills, frontend-slides, playwright-cli, humanizer (+ manually kept: notebooklm, beamer-style, humanizer-zh, unbox) |
+| **Personal** | [sjh-skills](https://github.com/jiahao-shao1/sjh-skills) monorepo (symlink) | scholar-agent, cmux, codex-review, codex-task, context-audit, daily-summary, experiment-registry, handoff, init-project, notion-lifeos, obsidian-brain, paper-analyzer, paper-self-review, project-review, remote-cluster-agent, sync-docs, todo-worker, web-fetcher, bibtex-fetch |
 | **Private** | Separate private repo (symlink, .gitignore'd) | — |
 
 Personal and private skills live in separate monorepos and are linked via symlinks (not submodules). Run the setup script after cloning:

@@ -32,7 +32,7 @@ export PATH="$HOME/.local/nodejs/current/bin:$HOME/.local/bin:$HOME/go/bin:$PATH
 eval "$(starship init zsh)"
 
 # Zoxide (smarter cd)
-eval "$(zoxide init zsh)"
+command -v zoxide >/dev/null 2>&1 && eval "$(zoxide init zsh)"
 
 # Locale
 export LANG=en_US.UTF-8
@@ -100,11 +100,28 @@ alias proxy="export http_proxy=http://127.0.0.1:7890 https_proxy=http://127.0.0.
 alias unproxy="unset http_proxy https_proxy all_proxy"
 # Claude Code
 export CLAUDE_CODE_NO_FLICKER=1  # 全屏渲染模式（防花屏/滚动问题）
-alias cc46='http_proxy=http://127.0.0.1:7890 https_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890 claude --dangerously-skip-permissions --model claude-opus-4-6[1m]'
-alias cc-auto='http_proxy=http://127.0.0.1:7890 https_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890 claude --permission-mode auto'
-alias cc='http_proxy=http://127.0.0.1:7890 https_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890 claude --dangerously-skip-permissions'
-alias cct='http_proxy=http://127.0.0.1:7890 https_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890 CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 claude --dangerously-skip-permissions --model claude-opus-4-6[1m]'
+# claude-safe wrapper is macOS-only (codesign trick); elsewhere use the native install
+CLAUDE_BIN="$HOME/.local/claude-safe/bin/claude"
+[[ -x "$CLAUDE_BIN" && "$(uname)" == "Darwin" ]] || CLAUDE_BIN="$HOME/.local/bin/claude"
+function claude() {
+    "$CLAUDE_BIN" "$@"
+}
+alias cc46='http_proxy=http://127.0.0.1:7890 https_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890 "$CLAUDE_BIN" --dangerously-skip-permissions --model claude-opus-4-6[1m]'
+alias cc-auto='http_proxy=http://127.0.0.1:7890 https_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890 "$CLAUDE_BIN" --permission-mode auto'
+alias cc='http_proxy=http://127.0.0.1:7890 https_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890 "$CLAUDE_BIN" --dangerously-skip-permissions'
+alias cct='http_proxy=http://127.0.0.1:7890 https_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890 CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 "$CLAUDE_BIN" --dangerously-skip-permissions --model claude-opus-4-6[1m]'
 alias cx='http_proxy=http://127.0.0.1:7890 https_proxy=http://127.0.0.1:7890 all_proxy=socks5://127.0.0.1:7890 codex --dangerously-bypass-approvals-and-sandbox'
+
+# Remote Control on the workstation: one detached tmux session per project dir.
+# Proxy env is required there (Anthropic is region-blocked without it); internal hosts stay direct.
+function rc() {
+    local name="${1:-$(basename "$PWD")}" sess
+    sess="rc-${name//[^A-Za-z0-9_-]/_}"
+    tmux has-session -t "$sess" 2>/dev/null && { echo "already running: tmux attach -t $sess"; return 0; }
+    tmux new-session -d -s "$sess" -c "$PWD" \
+        "http_proxy=http://127.0.0.1:7890 https_proxy=http://127.0.0.1:7890 no_proxy=localhost,127.0.0.1,.alipay.com,.alibaba-inc.com,.antfin.com,.antgroup-inc.cn,30.0.0.0/8 $CLAUDE_BIN remote-control --name $name; exec zsh" \
+        && echo "started $sess in $PWD  (attach: tmux attach -t $sess; list: tmux ls)"
+}
 
 # Dotfiles
 alias dot-sync="~/dotfiles/dot-sync.sh"

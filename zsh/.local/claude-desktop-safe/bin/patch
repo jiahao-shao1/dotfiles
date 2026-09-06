@@ -1,0 +1,243 @@
+#!/bin/zsh
+
+set -euo pipefail
+
+readonly official_app="/Applications/Claude.app"
+readonly state_dir="${HOME}/Library/Application Support/claude-desktop-safe"
+readonly source_cache_app="${state_dir}/Claude Source.app"
+readonly runtime_app="${state_dir}/Claude Safe Runtime.app"
+readonly runtime_executable="${runtime_app}/Contents/MacOS/Claude"
+readonly source_stamp="${state_dir}/source-manifest"
+readonly runtime_stamp="${state_dir}/runtime-manifest"
+readonly source_md5_stamp="${state_dir}/source-md5"
+readonly runtime_md5_stamp="${state_dir}/runtime-md5"
+readonly lock_dir="${state_dir}/lock"
+readonly shipit_label="com.anthropic.claudefordesktop.ShipIt"
+readonly shipit_dir="${HOME}/Library/Caches/${shipit_label}"
+readonly nonce_bytes=16
+readonly -a executable_relpaths=(
+    "Contents/MacOS/Claude"
+    "Contents/Frameworks/Claude Helper.app/Contents/MacOS/Claude Helper"
+    "Contents/Frameworks/Claude Helper (GPU).app/Contents/MacOS/Claude Helper (GPU)"
+    "Contents/Frameworks/Claude Helper (Plugin).app/Contents/MacOS/Claude Helper (Plugin)"
+    "Contents/Frameworks/Claude Helper (Renderer).app/Contents/MacOS/Claude Helper (Renderer)"
+)
+
+fail() {
+    print -u2 -- "[claude-desktop-safe] $*"
+    exit 1
+}
+
+force_refresh=0
+case "${1:-}" in
+    "") ;;
+    --refresh)
+        force_refresh=1
+        shift
+        ;;
+    *) fail "未知参数：$1" ;;
+esac
+(( $# == 0 )) || fail "参数过多"
+
+[[ -x "${official_app}/Contents/MacOS/Claude" ]] \
+    || fail "找不到官方 Claude Desktop"
+mkdir -p "$state_dir"
+
+app_version() {
+    /usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' \
+        "$1/Contents/Info.plist" 2>/dev/null
+}
+
+version_key() {
+    local version="$1"
+    local -a parts
+    parts=("${(@s:.:)version}")
+    printf '%012d%012d%012d%012d' \
+        "${parts[1]:-0}" "${parts[2]:-0}" \
+        "${parts[3]:-0}" "${parts[4]:-0}"
+}
+
+bundle_is_complete() {
+    local root="$1"
+    local relpath
+
+    for relpath in "${executable_relpaths[@]}"; do
+        [[ -x "${root}/${relpath}" ]] || return 1
+    done
+}
+
+bundle_is_trusted() {
+    local root="$1"
+
+    [[ -d "$root" ]] \
+        && bundle_is_complete "$root" \
+        && codesign --verify --deep --strict "$root" >/dev/null 2>&1
+}
+
+bundle_manifest() {
+    local root="$1"
+    local relpath
+    local manifest=""
+
+    for relpath in "${executable_relpaths[@]}"; do
+        [[ -x "${root}/${relpath}" ]] \
+            || fail "缺少 Electron 可执行文件：${relpath}"
+        manifest+="${relpath}:$(md5 -q "${root}/${relpath}")\n"
+    done
+
+    printf '%b' "$manifest" | shasum -a 256 | awk '{print $1}'
+}
+
+# WatchPaths 可能短时间连续触发；只有一个实例负责处理。
+if ! mkdir "$lock_dir" 2>/dev/null; then
+    exit 0
+fi
+
+cleanup() {
+    rmdir "$lock_dir" 2>/dev/null || true
+}
+trap cleanup EXIT HUP INT TERM
+
+# 运行中不替换 bundle；重复点击只负责把现有窗口带到前台。
+if [[ -x "$runtime_executable" ]] \
+    && pgrep -f "$runtime_executable" >/dev/null 2>&1; then
+    if (( force_refresh )); then
+        print -u2 -- "[claude-desktop-safe] Claude 正在运行，本次不刷新运行副本"
+    fi
+    exit 0
+fi
+
+# 防止 Squirrel 在我们读取已下载更新时并发替换运行副本。
+launchctl bootout "gui/$(id -u)/${shipit_label}" >/dev/null 2>&1 || true
+
+# 选择最新的官方签名来源：系统安装、持久源缓存、Squirrel 刚安装的
+# 干净 runtime，或尚未安装的 staged update。
+best_app=""
+best_version=""
+best_key=""
+
+consider_source() {
+    local candidate="$1"
+    local candidate_version candidate_key
+
+    bundle_is_trusted "$candidate" || return 0
+    candidate_version="$(app_version "$candidate")" || return 0
+    candidate_key="$(version_key "$candidate_version")"
+
+    if [[ -z "$best_key" || "$candidate_key" > "$best_key" \
+        || "$candidate_key" == "$best_key" ]]; then
+        best_app="$candidate"
+        best_version="$candidate_version"
+        best_key="$candidate_key"
+    fi
+}
+
+consider_source "$official_app"
+consider_source "$source_cache_app"
+consider_source "$runtime_app"
+for staged_app in "${shipit_dir}"/update.*/Claude.app(N); do
+    consider_source "$staged_app"
+done
+
+[[ -n "$best_app" ]] || fail "找不到签名有效的 Claude Desktop 来源"
+source_manifest="$(bundle_manifest "$best_app")"
+
+# Squirrel 的 staged update 会在安装后被删除；先保存一份签名有效、不会
+# 被执行的源 bundle，后续安全运行副本始终从最新源构建。
+cached_manifest=""
+if bundle_is_trusted "$source_cache_app"; then
+    cached_manifest="$(bundle_manifest "$source_cache_app")"
+fi
+
+if [[ "$source_manifest" != "$cached_manifest" ]]; then
+    cache_build="${state_dir}/.Claude Source.build.$$.app"
+    cache_previous="${state_dir}/.Claude Source.previous.$$.app"
+
+    cp -cR "$best_app" "$cache_build"
+    bundle_is_trusted "$cache_build" || fail "Claude Desktop 源缓存签名校验失败"
+
+    if [[ -d "$source_cache_app" ]]; then
+        mv "$source_cache_app" "$cache_previous"
+    fi
+    mv "$cache_build" "$source_cache_app"
+    if [[ -d "$cache_previous" ]]; then
+        rm -rf -- "$cache_previous"
+    fi
+fi
+
+source_app="$source_cache_app"
+source_manifest="$(bundle_manifest "$source_app")"
+
+if (( ! force_refresh )) \
+    && [[ -x "$runtime_executable" ]] \
+    && [[ -f "$source_stamp" ]] \
+    && [[ -f "$runtime_stamp" ]] \
+    && [[ "$(<"$source_stamp")" == "$source_manifest" ]] \
+    && [[ "$(<"$runtime_stamp")" == "$(bundle_manifest "$runtime_app")" ]]; then
+    exit 0
+fi
+
+version="$(app_version "$source_app")"
+
+build_app="${state_dir}/.Claude Safe Runtime.build.$$.app"
+previous_app="${state_dir}/.Claude Safe Runtime.previous.$$.app"
+
+cleanup_build() {
+    if [[ -d "$build_app" ]]; then
+        rm -rf -- "$build_app"
+    fi
+    rmdir "$lock_dir" 2>/dev/null || true
+}
+trap cleanup_build EXIT HUP INT TERM
+
+# APFS clone 不重复占用整个 Electron App 的物理空间。
+cp -cR "$source_app" "$build_app"
+for relpath in "${executable_relpaths[@]}"; do
+    source_file="${source_app}/${relpath}"
+    runtime_file="${build_app}/${relpath}"
+
+    # 每次冷启动使用新随机尾数据；Mach-O 会忽略文件尾，但完整文件 MD5 会变化。
+    dd if=/dev/urandom bs="$nonce_bytes" count=1 2>/dev/null >> "$runtime_file"
+
+    source_size="$(stat -f %z "$source_file")"
+    runtime_size="$(stat -f %z "$runtime_file")"
+    [[ "$runtime_size" -eq $((source_size + nonce_bytes)) ]] \
+        || fail "运行副本长度校验失败：${relpath}"
+
+    prefix_md5="$(head -c "$source_size" "$runtime_file" | md5 -q)"
+    [[ "$prefix_md5" == "$(md5 -q "$source_file")" ]] \
+        || fail "运行副本内容校验失败：${relpath}"
+done
+
+patched_manifest="$(bundle_manifest "$build_app")"
+
+if [[ -d "$runtime_app" ]]; then
+    mv "$runtime_app" "$previous_app"
+fi
+mv "$build_app" "$runtime_app"
+if [[ -d "$previous_app" ]]; then
+    rm -rf -- "$previous_app"
+fi
+
+source_stamp_tmp="${source_stamp}.$$"
+runtime_stamp_tmp="${runtime_stamp}.$$"
+printf '%s\n' "$source_manifest" > "$source_stamp_tmp"
+printf '%s\n' "$patched_manifest" > "$runtime_stamp_tmp"
+mv -f "$source_stamp_tmp" "$source_stamp"
+mv -f "$runtime_stamp_tmp" "$runtime_stamp"
+md5 -q "${source_app}/Contents/MacOS/Claude" > "${source_md5_stamp}.$$"
+md5 -q "$runtime_executable" > "${runtime_md5_stamp}.$$"
+mv -f "${source_md5_stamp}.$$" "$source_md5_stamp"
+mv -f "${runtime_md5_stamp}.$$" "$runtime_md5_stamp"
+
+# 新版已经进入持久源缓存和安全 runtime；移除对应的 staged 安装任务，
+# 避免它继续把未修改的 bundle 覆盖回来。
+for update_dir in "${shipit_dir}"/update.*(N/); do
+    rm -rf -- "$update_dir"
+done
+rm -f -- "${shipit_dir}/ShipItState.plist"
+
+trap - EXIT HUP INT TERM
+rmdir "$lock_dir" 2>/dev/null || true
+
+print -- "[claude-desktop-safe] 已准备 Claude Desktop ${version}: ${patched_manifest}"

@@ -85,8 +85,8 @@ Skill 来自三个来源：
 
 | 来源 | 管理方式 | Skills |
 |------|---------|--------|
-| **第三方** | `npx skills add`（[install-skills.sh](scripts/install-skills.sh)） | brainstorming, writing-plans, executing-plans, dispatching-parallel-agents, subagent-driven-development, using-git-worktrees, frontend-design, skill-creator, find-skills, frontend-slides, baoyu-infographic, baoyu-xhs-images, playwright-cli, notebooklm |
-| **个人** | [sjh-skills](https://github.com/jiahao-shao1/sjh-skills) monorepo（symlink） | scholar-agent, cmux, codex-review, daily-summary, init-project, notion-lifeos, project-review, web-fetcher |
+| **第三方** | `npx skills add`（[install-skills.sh](scripts/install-skills.sh)） | frontend-design, skill-creator, find-skills, frontend-slides, playwright-cli, humanizer (+ manually kept: notebooklm, beamer-style, humanizer-zh, unbox) |
+| **个人** | [sjh-skills](https://github.com/jiahao-shao1/sjh-skills) monorepo（symlink） | scholar-agent, cmux, codex-review, codex-task, context-audit, daily-summary, experiment-registry, handoff, init-project, notion-lifeos, obsidian-brain, paper-analyzer, paper-self-review, project-review, remote-cluster-agent, sync-docs, todo-worker, web-fetcher, bibtex-fetch |
 | **私有** | 独立私有仓库（symlink，.gitignore 排除） | — |
 
 个人和私有 skill 存放在独立的 monorepo 中，通过 symlink 链接（不再使用 submodule）。克隆后运行：

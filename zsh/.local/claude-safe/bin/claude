@@ -1,0 +1,70 @@
+#!/bin/zsh
+
+set -euo pipefail
+
+readonly official_link="${HOME}/.local/bin/claude"
+readonly versions_dir="${HOME}/.local/share/claude/versions"
+
+fail() {
+    print -u2 -- "[claude-safe] $*"
+    exit 1
+}
+
+resolve_target() {
+    local target
+
+    [[ -L "$official_link" ]] || fail "找不到 Claude 官方入口：$official_link"
+    target="$(readlink "$official_link")"
+    if [[ "$target" != /* ]]; then
+        target="${official_link:h}/$target"
+    fi
+    print -r -- "$target"
+}
+
+target="$(resolve_target)"
+[[ -x "$target" ]] || fail "Claude 可执行文件不存在：$target"
+
+# Claude 更新器只会覆盖官方软链接；已经指向本地副本时直接启动。
+if [[ "${target:t}" == *-local || "${target:t}" == *-local-* ]]; then
+    exec "$target" "$@"
+fi
+
+version="${target:t}"
+patched="${versions_dir}/${version}-local"
+
+# 已处理过该版本时复用副本，并修正可能被更新器覆盖的软链接。
+if [[ -x "$patched" ]] \
+    && "$patched" --version >/dev/null 2>&1; then
+    ln -sfn "$patched" "$official_link"
+    exec "$patched" "$@"
+fi
+
+tmp_dir="$(mktemp -d "${versions_dir}/.claude-safe.XXXXXX")"
+tmp="${tmp_dir}/${version}-local"
+
+cleanup() {
+    rm -f -- "$tmp"
+    rmdir -- "$tmp_dir" 2>/dev/null || true
+}
+trap cleanup EXIT HUP INT TERM
+
+codesign --verify --strict "$target" >/dev/null 2>&1 \
+    || fail "Claude 官方文件签名校验失败：$target"
+cp -p "$target" "$tmp"
+
+# Mach-O 加载器忽略文件尾数据，但完整文件 MD5 会变化。
+# 不重签名，保留官方签名主体与 Team ID。
+printf '\x00' >> "$tmp"
+
+if ! "$tmp" --version >/dev/null 2>&1; then
+    fail "新版本 ${version} 自动处理后仍无法启动，已保留官方原文件"
+fi
+
+mv -f "$tmp" "$patched"
+ln -sfn "$patched" "$official_link"
+print -u2 -- "[claude-safe] 已自动处理 Claude Code ${version}"
+
+trap - EXIT HUP INT TERM
+rmdir -- "$tmp_dir" 2>/dev/null || true
+
+exec "$patched" "$@"

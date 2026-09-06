@@ -16,7 +16,7 @@ COMMON_FLAGS="-y -g -a claude-code -a codex"
 
 echo "Installing third-party skills for Claude Code..."
 echo ""
-echo "Note: superpowers and sjh-skills are now installed via Claude Code plugin."
+echo "Note: sjh-skills is installed via Claude Code plugin (superpowers dropped 2026-09)."
 echo "      Plugins are declared in settings.json and auto-synced via stow."
 echo ""
 
@@ -32,23 +32,12 @@ npx skills add vercel-labs/skills --skill find-skills $COMMON_FLAGS
 echo "[3/5] zarazhangrui/frontend-slides..."
 npx skills add zarazhangrui/frontend-slides $COMMON_FLAGS
 
-# jimliu/baoyu-skills (baoyu-infographic, baoyu-xhs-images)
-echo "[4/5] jimliu/baoyu-skills..."
-npx skills add jimliu/baoyu-skills \
-  --skill baoyu-infographic \
-  --skill baoyu-xhs-images \
-  $COMMON_FLAGS
-
 # microsoft/playwright-cli
-echo "[5/5] microsoft/playwright-cli..."
+echo "[4/5] microsoft/playwright-cli..."
 npx skills add microsoft/playwright-cli $COMMON_FLAGS
 
-# davila7/claude-code-templates (markitdown)
-echo "[6/7] davila7/claude-code-templates (markitdown)..."
-npx skills add https://github.com/davila7/claude-code-templates --skill markitdown $COMMON_FLAGS
-
 # blader/humanizer
-echo "[7/7] blader/humanizer..."
+echo "[5/5] blader/humanizer..."
 npx skills add https://github.com/blader/humanizer --skill humanizer $COMMON_FLAGS
 
 echo ""
