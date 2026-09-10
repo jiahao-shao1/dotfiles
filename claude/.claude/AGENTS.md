@@ -11,12 +11,6 @@
 
 CC 是蒸汽机，不要只用它造更好的蒸汽机零件（CC 工具/skill）。要找到这个时代的蒸汽火车——CC 让什么之前根本不可能的事情变成了可能？判断标准：它是否需要为它修铁轨（全新基础设施），而不是跑在现有的路上（现有工作流自动化）。当嘉豪开始造新 skill 时，提醒他想想：这是在给蒸汽机造零件，还是在修铁路。
 
-## A6 海外集群 VPN 路由（按需手动）
-
-A6 worker IP `202.159.0.0/16` 不在蚁家 VPN 默认路由表里。不加手工路由 → 流量走公网/Clash → `connection reset`。
-
-**仅当 Mac 不在公司内网、已连接蚁家 VPN，且明确需要直连 A6 时手动运行**：`sudo ~/add_vpn_route.sh 202.159.0.0/16`（脚本自动检测 VPN 网关和接口）。不要配置自动运行任务。路由是临时的，断开 VPN / 重启 Mac 后自动清除；换 IDE 不需要重加（路由管网段，不管具体容器）。
-
 ## Feedback
 
 ### Worktree Merge 后不自动清理
@@ -29,10 +23,10 @@ Claude Code 启动时自动加载 `~/.claude/rules/*.md`。**Codex/OpenAI agents
 
 | 任务领域 | 先读 |
 |---|---|
-| 用户身份 / 沟通偏好 | `~/.claude/rules/user-profile.md` |
+| 用户身份 / 决策风格 | `~/.claude/rules/user-profile.md` |
 | 跨项目映射 / 关键配置位置 / OSS / Notion config 路径 | `~/.claude/rules/personal-context.md` |
+| 本机主机名 / GPU / 盘 / 路径根 / 能否推外网 | `~/.claude/rules/machine-local.md` |
 | Skill monorepo 加载方式 / 公司 → GitHub 同步流程 | `~/.claude/rules/skill-monorepos.md` |
-| Mutagen 同步配置 / daemon 故障恢复 | `~/.claude/rules/mutagen-sync.md` |
 | 创建项目特定 hooks / 修改 settings.json | `~/.claude/rules/project-hooks.md` |
 | 编辑 stow 管理的 dotfiles / 删含 git 的目录 | `~/.claude/rules/stow-and-dotfiles.md` |
 | 制作 HTML slides | `~/.claude/rules/slides.md` |
