@@ -23,8 +23,9 @@
 - `claude remote-control` 要求目录已过 trust 对话框，且拒绝非交互接受（用 `~/.claude.json` 预置 `hasTrustDialogAccepted` 被 auto mode 分类器拦）。每个项目目录先 `cc-auto` 进去过一次 trust 再 `rc`。
 - 挪 `~/code` 到别的盘：先 rsync 预拷，再停 rc 会话 → `rsync --delete` 增量 → `mv` 旧目录 + `ln -s` → 验证 → `rsync -n --delete` 对比无差异后再删旧目录。正在跑的 claude 进程 cwd 跟着旧 inode，不停会写进即将删除的目录。
 - h200 上 mutagen 时代的 va2 副本没有 `.git` 且缺 `third_party/`（`.mutagenignore`）；转正规 clone：`git init` + `remote add` + `fetch` + `reset --mixed origin/main` + `git checkout -- .`。
+- **skylark MCP 在 Linux 上可用**：`utoo-proxy` 有 Linux 版（官方 `setup.sh` 自动选 linux-x86），ws 无蚁家客户端要走 SDK 模式：MCP env 里带 `UTOO_USE_SDK=1`（`UTOO_SKIP_KEYRING=1` 一并带上保持一致），首次 `UTOO_USE_SDK=1 ~/.utoo-proxy/utoo-proxy login --timeout 900` 打印内网 OAuth 链接、进程侧轮询，不需要本地回调端口，在 Mac 浏览器打开即可；token 存 `~/.agent-client-sdk/utoo-proxy/tokens_secure.db`。**坑**：login 进程中途退出后再起会复用 `pkce_session.json` 里的旧 token（服务端已作废，授权页显示异常）；同时 `claude mcp get/list` 会拉起 utoo-proxy 实例一起轮询授权。修法：`pkill -x utoo-proxy`、把 `pkce_session.json` 挪走、只起一个 login。验证用 `utoo-proxy cli --mcp <url> --transport streamable skylark_user_info`。
 - `claude-safe` 包装是 macOS codesign 手法，`.zshrc.shared` 里用 `CLAUDE_BIN` 变量按平台回退；替换路径字符串时别把刚插入的定义行也替换掉（发生过一次）。
-- 未移植（无 Linux 版或无意义）：aivision `cchooks` / `cdxhooks`、agent-security plugin、`utoo-proxy`（skylark MCP）、`dws`（dingtalk skills）、chrome-devtools MCP。公司项目（va2）是否在无监管 hook 的 ws 上跑，是合规问题，单独决定。
+- 未移植（无 Linux 版或无意义）：aivision `cchooks` / `cdxhooks`、agent-security plugin、`dws`（dingtalk skills）、chrome-devtools MCP。公司项目（va2）是否在无监管 hook 的 ws 上跑，是合规问题，单独决定。
 
-**Files**: `zsh/.zshrc.shared`（`CLAUDE_BIN` 回退 + `rc()`）、workstation `~/.config/mihomo/refresh.sh`、`~/.claude/settings.json`、`~/.codex/config.toml`、`~/.config/robby-cluster/nodes.json`、`~/.ssh/config`；VPS 仓 `docs/knowledge/deployment.md` 2026-09-06 条
+**Files**: `zsh/.zshrc.shared`（`CLAUDE_BIN` 回退 + `rc()`）、workstation `~/.config/mihomo/refresh.sh`、`~/.claude/settings.json`、`~/.codex/config.toml`、`~/.config/robby-cluster/nodes.json`、`~/.ssh/config`、`~/.utoo-proxy/`；VPS 仓 `docs/knowledge/deployment.md` 2026-09-06 条
 **Commit**: 未提交（在 workstation 上 commit）
